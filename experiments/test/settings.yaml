@@ -8,8 +8,6 @@ paths:
   input_filenames:
     - "inputs/20260203.md"
     - "inputs/20260225.md"
-    - "inputs/20260318.md"
-    - "inputs/20260414.md"
 trial_model:
   name: "gpt-5.4"
   effort: "medium"
