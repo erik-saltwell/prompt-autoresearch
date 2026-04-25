@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Callable
 from dataclasses import KW_ONLY, dataclass
 from itertools import chain
 from pathlib import Path
@@ -43,31 +44,47 @@ async def evaluate_result_with_limit(
     run_idx: int,
     settings: Settings,
     eval_semaphore: asyncio.Semaphore,
+    on_eval_done: Callable[[], None] = lambda: None,
 ) -> str:
     async with eval_semaphore:
-        return await evaluate_result(trial_prompt, trial_output, run_idx, settings)
+        result = await evaluate_result(trial_prompt, trial_output, run_idx, settings)
+    on_eval_done()
+    return result
 
 
-async def evaluate_input(settings: Settings, input_filepath: Path, eval_semaphore: asyncio.Semaphore) -> list[str]:
+async def evaluate_input(
+    settings: Settings,
+    input_filepath: Path,
+    eval_semaphore: asyncio.Semaphore,
+    on_input_done: Callable[[], None] = lambda: None,
+    on_eval_done: Callable[[], None] = lambda: None,
+) -> list[str]:
     results: list[str] = []
     trial_prompt: PromptData = build_trial_prompt(settings.paths.trial_prompt, input_filepath)
     trial_output: str = await get_completion(
         trial_prompt.system_prompt, trial_prompt.user_prompt, settings.trial_model.name, settings.trial_model.effort
     )
+    on_input_done()
     eval_tasks = []
     for run_idx in range(settings.evaluations_per_input):
-        eval_tasks.append(evaluate_result_with_limit(trial_prompt, trial_output, run_idx, settings, eval_semaphore))
+        eval_tasks.append(
+            evaluate_result_with_limit(trial_prompt, trial_output, run_idx, settings, eval_semaphore, on_eval_done)
+        )
 
     results = await asyncio.gather(*eval_tasks)
     return results
 
 
-async def generate_all_evaluated_results(settings: Settings) -> list[str]:
+async def generate_all_evaluated_results(
+    settings: Settings,
+    on_input_done: Callable[[], None] = lambda: None,
+    on_eval_done: Callable[[], None] = lambda: None,
+) -> list[str]:
     results: list[str] = []
     input_tasks = []
     eval_semaphore = asyncio.Semaphore(settings.max_simultaneous_evaluations)
     for input_filepath in settings.paths.input_filenames:
-        input_tasks.append(evaluate_input(settings, input_filepath, eval_semaphore))
+        input_tasks.append(evaluate_input(settings, input_filepath, eval_semaphore, on_input_done, on_eval_done))
     results: list[str] = list(chain.from_iterable(await asyncio.gather(*input_tasks)))
     return results
 
@@ -80,12 +97,38 @@ class PerformExperimentCommand(ExperimentBaseCommand):
     def name(self) -> str:
         return "Perform Experiment"
 
-    def get_all_evaluation_results(self, settings: Settings) -> list[str]:
-        return asyncio.run(generate_all_evaluated_results(settings))
+    def get_all_evaluation_results(
+        self,
+        settings: Settings,
+        on_input_done: Callable[[], None] = lambda: None,
+        on_eval_done: Callable[[], None] = lambda: None,
+    ) -> list[str]:
+        return asyncio.run(generate_all_evaluated_results(settings, on_input_done, on_eval_done))
 
     def process_session(self, settings: Settings, experiment_dir: Path) -> None:
         common_paths.reset_experiment_dir(self.experiment_name)
-        evaluation_results: list[str] = self.get_all_evaluation_results(settings)
+
+        total_inputs = len(settings.paths.input_filenames)
+        total_evals = total_inputs * settings.evaluations_per_input
+        completed_inputs = 0
+        completed_evals = 0
+
+        def report() -> None:
+            self.logger.report_message(
+                f"inputs: {completed_inputs}/{total_inputs} evals: {completed_evals}/{total_evals}"
+            )
+
+        def on_input_done() -> None:
+            nonlocal completed_inputs
+            completed_inputs += 1
+            report()
+
+        def on_eval_done() -> None:
+            nonlocal completed_evals
+            completed_evals += 1
+            report()
+
+        evaluation_results: list[str] = self.get_all_evaluation_results(settings, on_input_done, on_eval_done)
         scoring_dimensions: list[ScoreDimension] = load_unscored_dimensions_from_rubric(settings.paths.eval_rubric)
         for evaluation_result in evaluation_results:
             integrate_scores_into_dimensions(evaluation_result, scoring_dimensions, self.logger)

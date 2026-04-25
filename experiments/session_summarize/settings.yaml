@@ -17,7 +17,7 @@ eval_model:
   name: "gpt-5.4"
   effort: "medium"
 eval_tags:
+  input_start_tag: "<session_logs>"
+  input_end_tag: "</session_logs>"
   prompt_output_start_tag: "<summary>"
   prompt_output_end_tag: "</summary>"
-  input_start_tag: "<transcript>"
-  input_end_tag: "</transcript>"

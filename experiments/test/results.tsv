@@ -1,0 +1,5 @@
+datetime	total_score	count_of_low_columns	result	experiment_description	commit
+2026-04-24T10:19:55-07:00	100.2	5	keep	baseline	2ad604c
+2026-04-24T10:58:06-07:00	102.1	7	keep	strengthen comp_03: require explicit entry per stated thought/decision/change-in-understanding	5774533
+2026-04-24T11:36:44-07:00	102.0	6	discard	add Entry Format section with sentence rules and wrong/right examples	9446d37
+2026-04-24T12:11:45-07:00	102.2	7	keep	fix struct_03: past-perfect recap narration, drop player-name character references	78776ac
