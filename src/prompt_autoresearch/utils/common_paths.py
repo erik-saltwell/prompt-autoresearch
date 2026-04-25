@@ -1,23 +1,90 @@
 from __future__ import annotations
 
-from collections.abc import Iterator
 from enum import StrEnum
 from pathlib import Path
 
-_DATA_DIR: Path = Path("data")
-_FRAGMENTS_DIR: Path = Path("fragments")
+
+class KnownPathnames(StrEnum):
+    EXPERIMENTS = "experiments"
+    INPUTS = "inputs"
+    OUTPUTS = "outputs"
+    LOGS = "logs"
+    SETTINGS = "settings.yaml"
+    RESULTS = "results.tsv"
+    EXPERIMENT_JOURNAL = "experiment_journal.md"
+    LAST_COMPLETION = "last_completion.md"
+    FRAGMENTS = "fragments"
+
 
 def ensure_directory(dir: Path) -> None:
     dir.mkdir(parents=True, exist_ok=True)
 
 
-def data_path() -> Path:
-    """Return the path to the computed datasets directory under outputs."""
-    return _DATA_DIR
+def experiments_dir() -> Path:
+    return Path.cwd() / KnownPathnames.EXPERIMENTS
 
 
-def fragments_path() -> Path:
-    """Return the shared fragments directory path."""
-    return _FRAGMENTS_DIR
+def experiment_dir(experiment_name: str) -> Path:
+    return experiments_dir() / experiment_name
 
 
+def outputs_dir(experiment_name: str) -> Path:
+    return experiment_dir(experiment_name) / KnownPathnames.OUTPUTS
+
+
+def logs_dir(experiment_name: str) -> Path:
+    return experiment_dir(experiment_name) / KnownPathnames.LOGS
+
+
+def inputs_dir(experiment_name: str) -> Path:
+    return experiment_dir(experiment_name) / KnownPathnames.INPUTS
+
+
+def fragments_dir() -> Path:
+    return Path.cwd() / KnownPathnames.FRAGMENTS
+
+
+def experiment_filepath(experiment_name: str, filename: str) -> Path:
+    return experiment_dir(experiment_name) / filename
+
+
+def outputs_filepath(experiment_name: str, filename: str) -> Path:
+    return outputs_dir(experiment_name) / filename
+
+
+def logs_filepath(experiment_name: str, filename: str) -> Path:
+    return logs_dir(experiment_name) / filename
+
+
+def settings_filepath(experiment_name: str) -> Path:
+    return experiment_filepath(experiment_name, KnownPathnames.SETTINGS)
+
+
+def results_filepath(experiment_name: str) -> Path:
+    return experiment_filepath(experiment_name, KnownPathnames.RESULTS)
+
+
+def journal_filepath(experiment_name: str) -> Path:
+    return experiment_filepath(experiment_name, KnownPathnames.EXPERIMENT_JOURNAL)
+
+
+def last_completion_filepath(experiment_name: str) -> Path:
+    return logs_dir(experiment_name) / KnownPathnames.LAST_COMPLETION
+
+
+def prepare_output_directory(output_dir: Path) -> None:
+    import shutil
+
+    if output_dir.exists():
+        shutil.rmtree(output_dir)
+
+    ensure_directory(output_dir)
+
+
+def reset_experiment_dir(experiment_name: str) -> None:
+    # This functions makes sure the experiment dir exists and then clears the output and logs directories, emptying them
+    # These directories will only have temporary feels that are ok to clean on each run.
+    exp_dir: Path = experiment_dir(experiment_name)
+    ensure_directory(exp_dir)
+    prepare_output_directory(logs_dir(experiment_name))
+    prepare_output_directory(outputs_dir(experiment_name))

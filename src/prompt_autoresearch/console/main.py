@@ -3,24 +3,27 @@ from __future__ import annotations
 from datetime import datetime
 from importlib.metadata import PackageNotFoundError, metadata
 from importlib.metadata import version as dist_version
+from typing import Annotated
 
 import typer
 from dotenv import load_dotenv
 from rich.console import Console
 
+from ..commands import (
+    PerformExperimentCommand,
+    ReadJournalCommand,
+    SetupExperimentCommand,
+    UpdateExperimentResultsCommand,
+)
+from ..data import ExperimentResultString, JournalEntry
 from ..protocols import CompositeLogger, LoggingProtocol
-from ..utils.logging_config import configure_logging
 from .file_logging_protocol import FileLogger
 from .rich_logging_protocol import RichConsoleLogger
-
-load_dotenv()
-configure_logging()
-
 
 app = typer.Typer(
     name="prompt-autoresearch",
     add_completion=True,
-    help="CLI for prompt-autoresearch",
+    help="Tools used by your coding agent to run autoresearch on your prompt.",
 )
 
 LOG_FILENAME: str = "prompt_autoresearch.log"
@@ -33,16 +36,70 @@ def create_logger() -> LoggingProtocol:
     return CompositeLogger([console_logger, file_logger])
 
 
-def seconds_since(start: datetime) -> float:
-    return (datetime.now() - start).total_seconds()
+@app.command("setup-experiment")
+def setup_experiment(experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")]) -> None:
+    """Initialize a new experiment run."""
+    SetupExperimentCommand(experiment_name=experiment_name).execute(create_logger())
 
 
+@app.command("perform-experiment")
+def perform_experiment(
+    experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")],
+    commit_changes: Annotated[
+        bool,
+        typer.Option("--commit/--no-commit", help="Commit improved prompts or revert unsuccessful prompt changes."),
+    ] = True,
+) -> None:
+    """Run trial prompts and evaluate the outputs."""
+    PerformExperimentCommand(experiment_name=experiment_name, commit_changes=commit_changes).execute(create_logger())
 
-@app.command("test")
-def test() -> None:
-    """Simple smoke command."""
-    console = Console()
-    console.print("[green]Hello from test[/green]")
+
+@app.command("read-journal")
+def read_journal(experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")]) -> None:
+    """Print the experiment journal."""
+    ReadJournalCommand(experiment_name=experiment_name).execute(create_logger())
+
+
+@app.command("update-results")
+def update_results(
+    experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")],
+    branch: Annotated[str, typer.Option("--branch", help="Branch used for this experiment result.")],
+    commit: Annotated[str, typer.Option("--commit-hash", help="Commit hash for this experiment result.")],
+    hypothesis: Annotated[str, typer.Option("--hypothesis", help="Hypothesis tested by this experiment result.")],
+    experimental_change: Annotated[
+        str,
+        typer.Option("--change", help="Prompt or workflow change tested by this experiment result."),
+    ],
+    total_score: Annotated[float, typer.Option("--total-score", help="Total score for this experiment result.")],
+    result: Annotated[
+        ExperimentResultString,
+        typer.Option("--result", help="Must be either 'keep' or 'discard' to note if we committed the changes."),
+    ],
+    low_scoring_results: Annotated[
+        list[str] | None,
+        typer.Option("--low-scoring-result", help="Low-scoring result note. May be provided multiple times."),
+    ] = None,
+    commit_changes: Annotated[
+        bool,
+        typer.Option("--commit/--no-commit", help="Commit the results and journal updates."),
+    ] = True,
+) -> None:
+    """Append a completed experiment result to the results log and journal."""
+    journal_entry = JournalEntry(
+        entry_date=datetime.now(),
+        branch=branch,
+        commit=commit,
+        hypothesis=hypothesis,
+        experimental_change=experimental_change,
+        total_score=total_score,
+        result=result,
+        low_scoring_results=low_scoring_results or [],
+    )
+    UpdateExperimentResultsCommand(
+        experiment_name=experiment_name,
+        journal_entry=journal_entry,
+        commit_changes=commit_changes,
+    ).execute(create_logger())
 
 
 def _version_callback(value: bool) -> None:
@@ -83,9 +140,8 @@ def _callback(
         is_eager=True,
     ),
 ) -> None:
-    """Root command group for reddit_rpg_miner."""
-    # Intentionally empty: this forces Typer to keep subcommands like `test`.
-    pass
+    """Root command group for prompt-autoresearch."""
+    load_dotenv()
 
 
 if __name__ == "__main__":

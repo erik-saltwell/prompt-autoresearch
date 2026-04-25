@@ -1,16 +1,20 @@
 [project]
 name = "prompt-autoresearch"
 version = "0.1.0"
-description = "Add your description here"
+description = "An environment for your coding harness to autoresearch prompt improvements"
 readme = "README.md"
-authors = [
-    { name = "Erik Saltwell", email = "erik.saltwell@gmail.com" },
-]
+authors = [{ name = "Erik Saltwell", email = "erik.saltwell@gmail.com" }]
 requires-python = ">=3.11"
-dependencies = ["python-dotenv>=1.2.1", "rich>=14.2.0", "typer>=0.21.1"]
+dependencies = [
+    "litellm>=1.83.0",
+    "pydantic>=2.13.3",
+    "python-dotenv>=1.2.1",
+    "rich>=14.2.0",
+    "typer>=0.21.1",
+]
 
 [project.scripts]
-prompt-autoresearch = "prompt_autoresearch.console:main.app"
+prompt-autoresearch = "prompt_autoresearch.console.main:app"
 
 [build-system]
 requires = ["uv_build>=0.9.25,<0.10.0"]
@@ -18,12 +22,12 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "mypy>=1.19.1",
     "pre-commit>=4.5.1",
     "pyright>=1.1.0",
     "pytest>=9.0.2",
     "ruff>=0.14.13",
     "ssort>=0.16.0",
+    "ty>=0.0.32",
 ]
 
 
@@ -43,24 +47,20 @@ ignore = []
 quote-style = "double"
 indent-style = "space"
 
-[tool.mypy]
-python_version = "3.11"
-warn_unused_configs = true
+[tool.pyright]
+include = ["src", "tests"]
+exclude = [".venv", ".git", ".ruff_cache", ".pytest_cache", "dist", "build"]
+pythonVersion = "3.11"
+typeCheckingMode = "standard"
+reportMissingTypeStubs = false
+reportUnnecessaryTypeIgnoreComment = "warning"
 
-# Reasonable signal without going full-strict
-check_untyped_defs = true
-disallow_incomplete_defs = true
-disallow_untyped_defs = false
+[tool.ty.environment]
+python-version = "3.11"
+root = ["./src"]
 
-no_implicit_optional = true
-warn_return_any = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_unreachable = true
+[tool.ty.src]
+include = ["src", "tests"]
 
-# Keep third-party stubs explicit (we'll add types-* as needed)
-ignore_missing_imports = true
-
-# Nice for CLI apps with a src/ layout
-mypy_path = ["src"]
-packages = ["prompt_autoresearch"]
+[tool.ty.terminal]
+output-format = "concise"

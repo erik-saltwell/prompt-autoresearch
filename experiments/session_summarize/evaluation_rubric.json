@@ -1,0 +1,302 @@
+{
+    "scoring": {
+        "scale": [
+            1,
+            2,
+            3
+        ],
+        "labels": {
+            "1": "More than one non-trivial counterexample was found, or one especially major counterexample was found that has a large impact on overall quality for that criterion.",
+            "2": "Exactly one non-trivial counterexample was found, and it is meaningful enough to lower the rating.",
+            "3": "No non-trivial counterexamples were found."
+        }
+    },
+    "dimensions": [
+        {
+            "name": "Cold Open",
+            "tag": "cold",
+            "description": "Evaluates the cold open section.",
+            "criteria": [
+                {
+                    "id": "cold_01",
+                    "text": "The cold open is a paragraph of prose, not a bullet list"
+                },
+                {
+                    "id": "cold_02",
+                    "text": "The cold open is 6 sentences or fewer."
+                },
+                {
+                    "id": "cold_03",
+                    "text": "The cold open explicitly states the party's starting location and their primary objective for the session."
+                },
+                {
+                    "id": "cold_04",
+                    "text": "The cold open identifies a material change in the party's situation, such as a concrete achievement, major discovery, or significant setback."
+                },
+                {
+                    "id": "cold_05",
+                    "text": "The cold open explicitly names an unresolved risk, time pressure, or looming threat."
+                },
+                {
+                    "id": "cold_06",
+                    "text": "The cold open explicitly states the party's immediate goal or intended next action in the next session."
+                }
+            ]
+        },
+        {
+            "name": "Discoveries",
+            "tag": "disc",
+            "description": "Evaluates the discoveries section.",
+            "criteria": [
+                {
+                    "id": "disc_01",
+                    "text": "The Discoveries section is a bullet list and each bullet is fewer than 3 sentences."
+                },
+                {
+                    "id": "disc_02",
+                    "text": "Each Discovery is newly uncovered information that answers or reframes an unresolved question about causes, motives, identities, relationships, hidden facts, deception, or the true state of a situation."
+                },
+                {
+                    "id": "disc_03",
+                    "text": "The Discoveries section excludes tactical complications, logistical constraints, routine planning details, and operational intel unless they answer or reframe an unresolved question covered by the Discovery scope note."
+                },
+                {
+                    "id": "disc_04",
+                    "text": "The Discoveries section excludes loot, object acquisition, and dead ends unless the item or dead end functions as evidence by revealing the true situation, exposing deception, disproving a mistaken assumption, or eliminating a serious possibility."
+                },
+                {
+                    "id": "disc_05",
+                    "text": "The Discoveries section is written as a bullet list of clear, full sentences that prioritize information density over narrative flavor. No formatting (like bolding or italics) is used."
+                },
+                {
+                    "id": "disc_06",
+                    "text": "Every clue, piece of evidence, and resulting discovery is accurately pulled from the Session Logs and contains no contradictions to the session's ground truth."
+                },
+                {
+                    "id": "disc_07",
+                    "text": "Every discovery identifies the specific clue, evidence, statement, observation, or event from the Session Logs that establishes the revelation, using concise wording that makes the support for the discovery explicit."
+                }
+            ]
+        },
+        {
+            "name": "Open Loops",
+            "tag": "loops",
+            "description": "Evaluates the open loops section.",
+            "criteria": [
+                {
+                    "id": "loops_01",
+                    "text": "The Open Loops section is a bullet list and each bullet is fewer than 4 sentences."
+                },
+                {
+                    "id": "loops_02",
+                    "text": "The Open Loops section includes every still-pending player objective, unresolved mystery, intended destination, or explicitly stated follow-up task from the session, but excludes ideas, mentions, or possibilities that were not adopted as active pending threads."
+                },
+                {
+                    "id": "loops_03",
+                    "text": "Every open loop represents a proactive player objective, unresolved mystery, intended destination, or uncompleted task. If the same underlying situation also creates a looming threat or time pressure, it may also appear in the Clocks section."
+                },
+                {
+                    "id": "loops_04",
+                    "text": "Every open loop frames what the characters still need to do."
+                },
+                {
+                    "id": "loops_05",
+                    "text": "If the Session Logs explicitly state a timeframe for the loop or a consequence for failing to close it, those details are accurately recorded; if not, the summary simply states the loop and avoids inventing stakes or deadlines."
+                },
+                {
+                    "id": "loops_06",
+                    "text": "Each entry is formatted as a straightforward, actionable description of the unachieved goal or lingering thread, avoiding unnecessary narrative exposition. The goal is to remind characters what they still need to do."
+                }
+            ]
+        },
+        {
+            "name": "Character Beats",
+            "tag": "beats",
+            "description": "Evaluates the character beats section.",
+            "criteria": [
+                {
+                    "id": "beats_01",
+                    "text": "The Character Beats section is a bullet list and each bullet is fewer than 3 sentences."
+                },
+                {
+                    "id": "beats_02",
+                    "text": "The Character Beats section includes every meaningful shift in a player character`s beliefs, goals, or relationships that is clearly demonstrated through that character`s own words, decisions, or actions in the Session Logs."
+                },
+                {
+                    "id": "beats_03",
+                    "text": "Each Character Beat is grounded in and consistent with the Session Logs."
+                },
+                {
+                    "id": "beats_04",
+                    "text": "Each Character Beat represents an observable change or transition. Do not include silence, lack of reaction, inferred internal state, or moments that merely restate an already established trait, attitude, or relationship."
+                },
+                {
+                    "id": "beats_05",
+                    "text": "Each Character Beat identifies the specific event, interaction, or discovery that acted as the catalyst for the change."
+                },
+                {
+                    "id": "beats_06",
+                    "text": "The Character Beats section tracks changes in player characters (or groups of player characters), not changes in NPCs or in how NPCs view the player characters."
+                }
+            ]
+        },
+        {
+            "name": "Clocks",
+            "tag": "clocks",
+            "description": "Evaluates the clocks section.",
+            "criteria": [
+                {
+                    "id": "clocks_01",
+                    "text": "The Clocks section is a bullet list and each bullet is fewer than 3 sentences."
+                },
+                {
+                    "id": "clocks_02",
+                    "text": "Every clock entry describes an unresolved threat, pressure, or adverse process from the Session Logs that could worsen through time, neglect, or opposition and would create a specific negative consequence for the party, their allies, their objectives, or the situation they depend on if left unaddressed."
+                },
+                {
+                    "id": "clocks_03",
+                    "text": "All qualifying clocks from the Session Logs appear in the Clocks section, including unresolved threats that directly shaped player decisions, constrained the party's options, or remained active pressures during the session, even if those threats did not visibly advance during this specific session."
+                },
+                {
+                    "id": "clocks_04",
+                    "text": "Each clock entry explicitly states the 'doom'\u2014the specific negative outcome or worsening state that will materialize if the issue is ignored or delayed."
+                },
+                {
+                    "id": "clocks_05",
+                    "text": "Timeframes or countdowns to the consequence are only included if they are explicitly stated in the log; if the timing is unknown, the summary omits temporal details entirely rather than inferring a timeline."
+                }
+            ]
+        },
+        {
+            "name": "Starting Situation",
+            "tag": "start",
+            "description": "Evaluates the starting situation section.",
+            "criteria": [
+                {
+                    "id": "start_01",
+                    "text": "The entire section is written as a single cohesive paragraph that does not exceed 6 complete sentences."
+                },
+                {
+                    "id": "start_02",
+                    "text": "The section accurately identifies the physical location of the party at the very beginning of the session as described in the Session Logs."
+                },
+                {
+                    "id": "start_03",
+                    "text": "The summary clearly states the party's active goal or intended direction as they began the session."
+                },
+                {
+                    "id": "start_04",
+                    "text": "The entry identifies the primary pressure, clock, or threat driving the players' initial actions, or explicitly notes if no immediate pressure existed."
+                },
+                {
+                    "id": "start_05",
+                    "text": "All starting conditions are drawn from the beginning of the provided transcript without pulling in external lore or assuming past-session context."
+                }
+            ]
+        },
+        {
+            "name": "Scene Walkthrough",
+            "tag": "scenes",
+            "description": "Evaluates the scene walkthrough section.",
+            "criteria": [
+                {
+                    "id": "scenes_01",
+                    "text": "The Scene Walkthrough divides the session into coherent narrative scenes. A new scene begins when there is a substantial change in the party’s location, immediate objective, dominant interaction, or primary obstacle. Do not split scenes for trivial repositioning, brief tactical escalation, or short beats that remain part of the same continuous situation."
+                },
+                {
+                    "id": "scenes_02",
+                    "text": "Every scene begins with a markdown subheader (e.g., `## Scene Title`) and is followed by a unified bulleted list detailing the scene's components, with no loose paragraph prose."
+                },
+                {
+                    "id": "scenes_03",
+                    "text": "The bulleted list for every scene explicitly identifies the physical location, the players' primary goal, and the specific narrative or physical obstacles encountered."
+                },
+                {
+                    "id": "scenes_04",
+                    "text": "The resolution of the scene is captured in a single bullet point that summarizes the macro-level outcome, not exceeding 2 complete sentences, and avoids turn-by-turn or play-by-play mechanical recaps."
+                },
+                {
+                    "id": "scenes_05",
+                    "text": "The bulleted list accurately includes short descriptions of any new open loops generated or discoveries made specifically during that scene, based only on the Session Logs."
+                },
+                {
+                    "id": "scenes_06",
+                    "text": "All scene components are factually supported by the provided Session Logs. Scene entries may repeat open loops, clocks, character beats, discoveries, or cold-open information when that information is factually accurate and necessary to describe what happened in that scene."
+                }
+            ]
+        },
+        {
+            "name": "Ending Situation",
+            "tag": "ending",
+            "description": "Evaluates the ending situation section.",
+            "criteria": [
+                {
+                    "id": "ending_01",
+                    "text": "The Ending Situation section accurately identifies the physical location of the party at the exact end of the Session Logs."
+                },
+                {
+                    "id": "ending_02",
+                    "text": "The Ending Situation section is written as a single cohesive paragraph that does not exceed 5 complete sentences."
+                },
+                {
+                    "id": "ending_03",
+                    "text": "The Ending Situation section contains exactly 1 to 2 sentences describing the most significant progress made toward the party's goals, avoiding a granular list of all actions taken during the session."
+                },
+                {
+                    "id": "ending_04",
+                    "text": "The Ending Situation section identifies only the explicit, immediate next steps the party agreed upon at the end of the session, excluding long-term macro goals (or omits goals entirely if none were stated)."
+                },
+                {
+                    "id": "ending_05",
+                    "text": "The Ending Situation section accurately identifies the primary unresolved threat or tension dominating the final moments, or explicitly states that the party ended the session in relative safety or stability if no immediate threat or tension was present."
+                }
+            ]
+        },
+        {
+            "name": "Names to Remember",
+            "tag": "names",
+            "description": "Evaluates the names to remember section.",
+            "criteria": [
+                {
+                    "id": "names_01",
+                    "text": "Every entry in the Names to Remember section is a specific person, location, organization, or unique object that was explicitly given a proper name or distinct moniker in the Session Logs; unnamed entities are excluded."
+                },
+                {
+                    "id": "names_02",
+                    "text": "Every entry follows the format of the entity's name, followed by a colon, and exactly one complete sentence of description (e.g., 'Name: Description.')."
+                },
+                {
+                    "id": "names_03",
+                    "text": "The single-sentence description accurately summarizes who or what the entity is, based entirely on established knowledge or new context provided in the log, without inventing external lore."
+                },
+                {
+                    "id": "names_04",
+                    "text": "The Names to Remember section includes named entities that were newly introduced or materially relevant in the session because they shaped player decisions, conflicts, discoveries, obligations, threats, relationships, destinations, or likely future play."
+                }
+            ]
+        },
+        {
+            "name": "Global Structure & Style",
+            "tag": "global",
+            "description": "Evaluates the entire document for global structure and style.",
+            "criteria": [
+                {
+                    "id": "global_01",
+                    "text": "The summary must contain all 9 required sections. If a section has no data, it must still be included with an explicit statement indicating it is empty."
+                },
+                {
+                    "id": "global_02",
+                    "text": "The sections must appear in this exact order: Cold Open, Discoveries, Open Loops, Character Beats, Clocks, Starting Situation, Scene Walkthrough, Ending Situation, Names to Remember."
+                },
+                {
+                    "id": "global_03",
+                    "text": "Every prose sentence and bullet entry in the summary is grammatically complete and contains a clear subject and verb. Section headings, scene subheaders, and the name label before the colon in Names to Remember entries are exempt from this sentence-completeness requirement."
+                },
+                {
+                    "id": "global_04",
+                    "text": "The summary avoids unnecessary length while still satisfying the required content of each section. Do not penalize overlap that is required because different sections serve different functions. Penalize only: (a) repeated statements within the same section that communicate the same point, (b) bullets or sentences that add no new fact, consequence, constraint, or actionable reminder, or (c) padding that makes an entry longer without making it clearer."
+                }
+            ]
+        }
+    ]
+}

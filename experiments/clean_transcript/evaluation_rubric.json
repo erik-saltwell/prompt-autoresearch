@@ -1,0 +1,88 @@
+{
+    "scoring": {
+        "scale": [
+            1,
+            2,
+            3
+        ],
+        "labels": {
+            "1": "More than one non-trivial counterexample was found, or one especially major counterexample was found that has a large impact on overall quality for that criterion.",
+            "2": "Exactly one non-trivial counterexample was found, and it is meaningful enough to lower the rating.",
+            "3": "No non-trivial counterexamples were found."
+        }
+    },
+    "dimensions": [
+        {
+            "name": "Completeness",
+            "tag": "comp",
+            "description": "Evaluates whether the cleaned transcript captures the in-game fiction at high resolution rather than compressing it into broad summary beats.",
+            "criteria": [
+                {
+                    "id": "comp_01",
+                    "text": "If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements."
+                },
+                {
+                    "id": "comp_02",
+                    "text": "session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries."
+                },
+                {
+                    "id": "comp_03",
+                    "text": "The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript."
+                },
+                {
+                    "id": "comp_04",
+                    "text": "The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript."
+                }
+            ]
+        },
+        {
+            "name": "Correctness",
+            "tag": "corr",
+            "description": "Evaluates whether every entry in the cleaned transcript is supported by the raw transcript and preserves the transcript's level of certainty.",
+            "criteria": [
+                {
+                    "id": "corr_01",
+                    "text": "Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript."
+                },
+                {
+                    "id": "corr_02",
+                    "text": "The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them."
+                }
+            ]
+        },
+        {
+            "name": "Focus",
+            "tag": "focus",
+            "description": "Evaluates whether the cleaned transcript includes only in-game fiction and removes table noise and mechanics.",
+            "criteria": [
+                {
+                    "id": "focus_01",
+                    "text": "The logs exclude mechanical process and rules detail, such as dice results, arithmetic, skill names, modifiers, damage numbers, hit points, resource accounting, and rule references, while preserving fictional outcomes and persistent fictional state changes produced by mechanics."
+                },
+                {
+                    "id": "focus_02",
+                    "text": "The logs exclude out-of-character table banter, jokes, side-conversations, scheduling, recording or app discussion, and real-world discussion unless they directly communicate explicit in-game facts needed for recap or live-play understanding."
+                }
+            ]
+        },
+        {
+            "name": "Structure",
+            "tag": "struct",
+            "description": "Evaluates whether the cleaned transcript uses the required flat log structure and remains readable as a narrator-style record.",
+            "criteria": [
+                {
+                    "id": "struct_01",
+                    "text": "The output uses the required JSON structure with exactly flat recap_log and session_log arrays for the cleaned transcript, and does not create scene names, scene objects, nested narrative_events lists, encounter sections, or location-based groupings."
+                },
+                {
+                    "id": "struct_02",
+                    "text": "Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events."
+                },
+                {
+                    "id": "struct_03",
+                    "text": "Every log entry is a complete standalone sentence written as an in-fiction record of what happened, not as notes, fragments, labels, table commands, verbatim player utterances, or transcript-style dialogue."
+                }
+            ]
+        }
+    ]
+}
