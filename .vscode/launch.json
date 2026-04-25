@@ -16,7 +16,7 @@
             ]
         },
         {
-            "name": "CLI: perform-experiment test --no-commit",
+            "name": "CLI: perform-experiment test",
             "type": "debugpy",
             "request": "launch",
             "module": "prompt_autoresearch",
@@ -24,7 +24,6 @@
             "args": [
                 "perform-experiment",
                 "test",
-                "--no-commit"
             ]
         },
         {
@@ -50,19 +49,7 @@
             ]
         },
         {
-            "name": "CLI: update-trial-prompt test",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "prompt_autoresearch",
-            "console": "integratedTerminal",
-            "args": [
-                "update-trial-prompt",
-                "test",
-                "experiments/test/trial_prompt.md"
-            ]
-        },
-        {
-            "name": "CLI: update-results test --no-commit",
+            "name": "CLI: update-results test",
             "type": "debugpy",
             "request": "launch",
             "module": "prompt_autoresearch",
@@ -86,7 +73,6 @@
                 "comp_01 needs more detail",
                 "--low-scoring-result",
                 "struct_02 needs clearer ordering",
-                "--no-commit"
             ]
         },
         {

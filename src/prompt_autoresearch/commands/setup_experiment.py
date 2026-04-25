@@ -32,7 +32,7 @@ class SetupExperimentCommand(ExperimentBaseCommand):
     def name(self) -> str:
         return "Setup Experiment"
 
-    def process_session(self, settings: Settings, experiment_dir: Path) -> None:
+    def process_experiment(self, settings: Settings, experiment_dir: Path) -> None:
         common_paths.reset_experiment_dir(self.experiment_name)
         current_branches: list[str] = local_branches()
         new_branch_name: str = _create_branch_name(current_branches)

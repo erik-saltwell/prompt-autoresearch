@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from collections.abc import Callable
 from dataclasses import KW_ONLY, dataclass
+from datetime import datetime
 from itertools import chain
 from pathlib import Path
 
@@ -92,7 +93,6 @@ async def generate_all_evaluated_results(
 @dataclass
 class PerformExperimentCommand(ExperimentBaseCommand):
     _: KW_ONLY
-    commit_changes: bool = True
 
     def name(self) -> str:
         return "Perform Experiment"
@@ -105,7 +105,7 @@ class PerformExperimentCommand(ExperimentBaseCommand):
     ) -> list[str]:
         return asyncio.run(generate_all_evaluated_results(settings, on_input_done, on_eval_done))
 
-    def process_session(self, settings: Settings, experiment_dir: Path) -> None:
+    def process_experiment(self, settings: Settings, experiment_dir: Path) -> None:
         common_paths.reset_experiment_dir(self.experiment_name)
 
         total_inputs = len(settings.paths.input_filenames)
@@ -115,7 +115,8 @@ class PerformExperimentCommand(ExperimentBaseCommand):
 
         def report() -> None:
             self.logger.report_message(
-                f"inputs: {completed_inputs}/{total_inputs} evals: {completed_evals}/{total_evals}"
+                f"time: {datetime.now().time().isoformat(timespec='milliseconds')} inputs: {completed_inputs}/"
+                f"{total_inputs} evals: {completed_evals}/{total_evals}",
             )
 
         def on_input_done() -> None:
@@ -128,6 +129,7 @@ class PerformExperimentCommand(ExperimentBaseCommand):
             completed_evals += 1
             report()
 
+        report()
         evaluation_results: list[str] = self.get_all_evaluation_results(settings, on_input_done, on_eval_done)
         scoring_dimensions: list[ScoreDimension] = load_unscored_dimensions_from_rubric(settings.paths.eval_rubric)
         for evaluation_result in evaluation_results:
@@ -138,20 +140,19 @@ class PerformExperimentCommand(ExperimentBaseCommand):
         self.logger.report_message(
             f"Experiment Result: {current_total_score} of {maximum_possible_total_score} possible."
         )
-        if self.commit_changes:
-            if current_total_score > previous_high_score:
-                commit_file(
-                    settings.paths.trial_prompt,
-                    f"experiment {self.experiment_name} new total score {current_total_score}",
-                )
-                self.logger.report_message(
-                    f"New high score.  Prior high score was {previous_high_score}. Changes have been committed to git."
-                )
-            else:
-                revert_file(settings.paths.trial_prompt)
-                self.logger.report_message(
-                    f"Results are not an improvement over prior high score of {previous_high_score}. Changes reverted."
-                )
+        if current_total_score > previous_high_score:
+            commit_file(
+                settings.paths.trial_prompt,
+                f"experiment {self.experiment_name} new total score {current_total_score}",
+            )
+            self.logger.report_message(
+                f"New high score.  Prior high score was {previous_high_score}. Changes have been committed to git."
+            )
+        else:
+            revert_file(settings.paths.trial_prompt)
+            self.logger.report_message(
+                f"Results are not an improvement over prior high score of {previous_high_score}. Changes reverted."
+            )
         self.logger.report_message("Low scoring tests:")
         for low_dimension in get_low_scoring_questions(scoring_dimensions, settings.high_score_threshold):
             self.logger.report_message(f"{low_dimension.name} - {low_dimension.description}")

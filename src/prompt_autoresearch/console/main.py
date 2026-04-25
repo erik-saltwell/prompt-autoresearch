@@ -45,13 +45,9 @@ def setup_experiment(experiment_name: Annotated[str, typer.Argument(help="Experi
 @app.command("perform-experiment")
 def perform_experiment(
     experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")],
-    commit_changes: Annotated[
-        bool,
-        typer.Option("--commit/--no-commit", help="Commit improved prompts or revert unsuccessful prompt changes."),
-    ] = True,
 ) -> None:
     """Run trial prompts and evaluate the outputs."""
-    PerformExperimentCommand(experiment_name=experiment_name, commit_changes=commit_changes).execute(create_logger())
+    PerformExperimentCommand(experiment_name=experiment_name).execute(create_logger())
 
 
 @app.command("read-journal")
@@ -79,10 +75,6 @@ def update_results(
         list[str] | None,
         typer.Option("--low-scoring-result", help="Low-scoring result note. May be provided multiple times."),
     ] = None,
-    commit_changes: Annotated[
-        bool,
-        typer.Option("--commit/--no-commit", help="Commit the results and journal updates."),
-    ] = True,
 ) -> None:
     """Append a completed experiment result to the results log and journal."""
     journal_entry = JournalEntry(
@@ -98,7 +90,6 @@ def update_results(
     UpdateExperimentResultsCommand(
         experiment_name=experiment_name,
         journal_entry=journal_entry,
-        commit_changes=commit_changes,
     ).execute(create_logger())
 
 

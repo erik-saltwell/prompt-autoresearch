@@ -16,5 +16,5 @@ class ReadJournalCommand(ExperimentBaseCommand):
     def name(self) -> str:
         return "Read Journal"
 
-    def process_session(self, settings: Settings, experiment_dir: Path) -> None:
+    def process_experiment(self, settings: Settings, experiment_dir: Path) -> None:
         self.logger.report_message(f"{load_journal(common_paths.journal_filepath(self.experiment_name))}")
