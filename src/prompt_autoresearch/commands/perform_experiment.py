@@ -7,6 +7,8 @@ from datetime import datetime
 from itertools import chain
 from pathlib import Path
 
+from prompt_autoresearch.tools import file_is_dirty
+
 from ..data import (
     PromptData,
     ScoreDimension,
@@ -140,19 +142,25 @@ class PerformExperimentCommand(ExperimentBaseCommand):
         self.logger.report_message(
             f"Experiment Result: {current_total_score} of {maximum_possible_total_score} possible."
         )
-        if current_total_score > previous_high_score:
-            commit_file(
-                settings.paths.trial_prompt,
-                f"experiment {self.experiment_name} new total score {current_total_score}",
-            )
-            self.logger.report_message(
-                f"New high score.  Prior high score was {previous_high_score}. Changes have been committed to git."
-            )
+        if file_is_dirty(settings.paths.trial_prompt):
+            if current_total_score > previous_high_score:
+                commit_file(
+                    settings.paths.trial_prompt,
+                    f"experiment {self.experiment_name} new total score {current_total_score}",
+                )
+                self.logger.report_message(
+                    f"New high score.  Prior high score was {previous_high_score}. Changes have been committed to git."
+                )
+            else:
+                revert_file(settings.paths.trial_prompt)
+                self.logger.report_message(
+                    f"Results are not an improvement over prior high score of {previous_high_score}. Changes reverted."
+                )
         else:
-            revert_file(settings.paths.trial_prompt)
             self.logger.report_message(
-                f"Results are not an improvement over prior high score of {previous_high_score}. Changes reverted."
+                f"prompt at {settings.paths.trial_prompt} has not changed, nothing to commit/rever."
             )
+
         self.logger.report_message("Low scoring tests:")
         for low_dimension in get_low_scoring_questions(scoring_dimensions, settings.high_score_threshold):
             self.logger.report_message(f"{low_dimension.name} - {low_dimension.description}")
