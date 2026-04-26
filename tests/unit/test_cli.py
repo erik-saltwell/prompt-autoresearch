@@ -59,10 +59,10 @@ def test_perform_experiment_cli_delegates_to_command(monkeypatch: pytest.MonkeyP
     monkeypatch.setattr(console_main, "PerformExperimentCommand", FakePerformExperimentCommand)
     monkeypatch.setattr(console_main, "create_logger", lambda: logger)
 
-    result = runner.invoke(app, ["perform-experiment", "clean_transcript", "--no-commit"], color=False)
+    result = runner.invoke(app, ["perform-experiment", "clean_transcript"], color=False)
 
     assert result.exit_code == 0
-    assert calls == [({"experiment_name": "clean_transcript", "commit_changes": False}, logger)]
+    assert calls == [({"experiment_name": "clean_transcript"}, logger)]
 
 
 def test_update_results_cli_builds_journal_entry(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -100,7 +100,6 @@ def test_update_results_cli_builds_journal_entry(monkeypatch: pytest.MonkeyPatch
             "struct_01",
             "--low-scoring-result",
             "comp_03",
-            "--no-commit",
         ],
         color=False,
     )
@@ -110,7 +109,6 @@ def test_update_results_cli_builds_journal_entry(monkeypatch: pytest.MonkeyPatch
     kwargs, command_logger = calls[0]
     journal_entry = kwargs["journal_entry"]
     assert kwargs["experiment_name"] == "clean_transcript"
-    assert kwargs["commit_changes"] is False
     assert journal_entry.branch == "20260425_a"
     assert journal_entry.commit == "abc123"
     assert journal_entry.hypothesis == "Try stricter scoring"

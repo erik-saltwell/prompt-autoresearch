@@ -6,7 +6,7 @@ from pathlib import Path
 
 from ..data import Settings
 from ..helpers import initialize_journal, initialize_results
-from ..tools.git import commit_files, create_branch, local_branches
+from ..tools.git import commit_files, create_and_switch_to_branch, local_branches
 from ..utils import common_paths
 from .experiment_base_command import ExperimentBaseCommand
 
@@ -39,7 +39,7 @@ class SetupExperimentCommand(ExperimentBaseCommand):
         results_path = common_paths.results_filepath(self.experiment_name)
         journal_path: Path = common_paths.journal_filepath(self.experiment_name)
 
-        create_branch(new_branch_name)
+        create_and_switch_to_branch(new_branch_name)
         initialize_results(results_path)
         initialize_journal(journal_path)
         commit_files([results_path, journal_path], f"initialize experiment {new_branch_name}")

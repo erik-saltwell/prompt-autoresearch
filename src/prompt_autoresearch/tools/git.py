@@ -6,8 +6,11 @@ from pathlib import Path
 
 from ..utils import run_process
 
+BRANCH_NAME_MAIN = "main"
+BRANCH_PREFIX_AUTORESEARCH = "autoresearch/"
 
-def create_branch(branchname: str) -> None:
+
+def create_and_switch_to_branch(branchname: str) -> None:
     """Create a new git branch, or switch to it if it already exists."""
     try:
         run_process(["git", "rev-parse", "--verify", f"refs/heads/{branchname}"], capture_output=True)
@@ -27,6 +30,7 @@ def file_is_dirty(filepath: Path) -> bool:
         run_process(["git", "diff", "--cached", "--quiet", "--", path])
         untracked = run_process(["git", "ls-files", "--others", "--exclude-standard", "--", path], capture_output=True)
     except subprocess.CalledProcessError as error:
+        # git diff --quiet exits 1 when differences are found; other codes are real errors.
         if error.returncode != 1:
             raise
         return True
@@ -44,6 +48,30 @@ def local_branches() -> list[str]:
     """Return all local branch names for the current git repository."""
     result = run_process(["git", "branch", "--format=%(refname:short)"], capture_output=True)
     return [branch for line in result.stdout.splitlines() if (branch := line.strip())]
+
+
+def current_branch() -> str:
+    """Return the current active branch name."""
+    result = run_process(["git", "branch", "--show-current"], capture_output=True)
+    return result.stdout.strip()
+
+
+def switch_to_main() -> None:
+    """Switch to the main branch."""
+    run_process(["git", "switch", BRANCH_NAME_MAIN])
+
+
+def tree_is_dirty() -> bool:
+    """Return whether the current git worktree has staged, unstaged, or untracked changes."""
+    try:
+        run_process(["git", "diff", "--quiet"])
+        run_process(["git", "diff", "--cached", "--quiet"])
+        untracked = run_process(["git", "ls-files", "--others", "--exclude-standard"], capture_output=True)
+    except subprocess.CalledProcessError as error:
+        if error.returncode != 1:
+            raise
+        return True
+    return bool(untracked.stdout.strip())
 
 
 def commit_files(filepaths: Iterable[Path], commit_message: str) -> str:

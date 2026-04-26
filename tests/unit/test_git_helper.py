@@ -8,7 +8,7 @@ import pytest
 from prompt_autoresearch.tools import git
 
 
-def test_create_branch_switches_to_existing_branch(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_create_and_switch_branch_switches_to_existing_branch(monkeypatch: pytest.MonkeyPatch) -> None:
     calls: list[tuple[list[str], bool]] = []
 
     def fake_run_process(cmd: list[str], capture_output: bool = False) -> subprocess.CompletedProcess[str]:
@@ -17,7 +17,7 @@ def test_create_branch_switches_to_existing_branch(monkeypatch: pytest.MonkeyPat
 
     monkeypatch.setattr(git, "run_process", fake_run_process)
 
-    git.create_branch("existing-branch")
+    git.create_and_switch_to_branch("existing-branch")
 
     assert calls == [
         (["git", "rev-parse", "--verify", "refs/heads/existing-branch"], True),
@@ -25,7 +25,7 @@ def test_create_branch_switches_to_existing_branch(monkeypatch: pytest.MonkeyPat
     ]
 
 
-def test_create_branch_creates_missing_branch(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_create_and_swtich_branch_creates_missing_branch(monkeypatch: pytest.MonkeyPatch) -> None:
     calls: list[tuple[list[str], bool]] = []
 
     def fake_run_process(cmd: list[str], capture_output: bool = False) -> subprocess.CompletedProcess[str]:
@@ -36,7 +36,7 @@ def test_create_branch_creates_missing_branch(monkeypatch: pytest.MonkeyPatch) -
 
     monkeypatch.setattr(git, "run_process", fake_run_process)
 
-    git.create_branch("new-branch")
+    git.create_and_switch_to_branch("new-branch")
 
     assert calls == [
         (["git", "rev-parse", "--verify", "refs/heads/new-branch"], True),
@@ -170,6 +170,118 @@ def test_local_branches_returns_branch_names(monkeypatch: pytest.MonkeyPatch) ->
 
     assert branches == ["main", "feature/test"]
     assert calls == [(["git", "branch", "--format=%(refname:short)"], True)]
+
+
+def test_current_branch_returns_active_branch(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[list[str], bool]] = []
+
+    def fake_run_process(cmd: list[str], capture_output: bool = False) -> subprocess.CompletedProcess[str]:
+        calls.append((cmd, capture_output))
+        return subprocess.CompletedProcess(cmd, 0, stdout="feature/current\n")
+
+    monkeypatch.setattr(git, "run_process", fake_run_process)
+
+    branch = git.current_branch()
+
+    assert branch == "feature/current"
+    assert calls == [(["git", "branch", "--show-current"], True)]
+
+
+def test_switch_to_main_switches_to_main_branch(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[list[str], bool]] = []
+
+    def fake_run_process(cmd: list[str], capture_output: bool = False) -> subprocess.CompletedProcess[str]:
+        calls.append((cmd, capture_output))
+        return subprocess.CompletedProcess(cmd, 0)
+
+    monkeypatch.setattr(git, "run_process", fake_run_process)
+
+    git.switch_to_main()
+
+    assert calls == [(["git", "switch", "main"], False)]
+
+
+def test_tree_is_dirty_returns_false_for_clean_tree(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[list[str], bool]] = []
+
+    def fake_run_process(cmd: list[str], capture_output: bool = False) -> subprocess.CompletedProcess[str]:
+        calls.append((cmd, capture_output))
+        if cmd[:2] == ["git", "ls-files"]:
+            return subprocess.CompletedProcess(cmd, 0, stdout="")
+        return subprocess.CompletedProcess(cmd, 0)
+
+    monkeypatch.setattr(git, "run_process", fake_run_process)
+
+    assert git.tree_is_dirty() is False
+    assert calls == [
+        (["git", "diff", "--quiet"], False),
+        (["git", "diff", "--cached", "--quiet"], False),
+        (["git", "ls-files", "--others", "--exclude-standard"], True),
+    ]
+
+
+def test_tree_is_dirty_returns_true_for_unstaged_changes(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[list[str], bool]] = []
+
+    def fake_run_process(cmd: list[str], capture_output: bool = False) -> subprocess.CompletedProcess[str]:
+        calls.append((cmd, capture_output))
+        raise subprocess.CalledProcessError(1, cmd)
+
+    monkeypatch.setattr(git, "run_process", fake_run_process)
+
+    assert git.tree_is_dirty() is True
+    assert calls == [(["git", "diff", "--quiet"], False)]
+
+
+def test_tree_is_dirty_returns_true_for_staged_changes(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[list[str], bool]] = []
+
+    def fake_run_process(cmd: list[str], capture_output: bool = False) -> subprocess.CompletedProcess[str]:
+        calls.append((cmd, capture_output))
+        if cmd == ["git", "diff", "--cached", "--quiet"]:
+            raise subprocess.CalledProcessError(1, cmd)
+        return subprocess.CompletedProcess(cmd, 0)
+
+    monkeypatch.setattr(git, "run_process", fake_run_process)
+
+    assert git.tree_is_dirty() is True
+    assert calls == [
+        (["git", "diff", "--quiet"], False),
+        (["git", "diff", "--cached", "--quiet"], False),
+    ]
+
+
+def test_tree_is_dirty_returns_true_for_untracked_files(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[list[str], bool]] = []
+
+    def fake_run_process(cmd: list[str], capture_output: bool = False) -> subprocess.CompletedProcess[str]:
+        calls.append((cmd, capture_output))
+        if cmd[:2] == ["git", "ls-files"]:
+            return subprocess.CompletedProcess(cmd, 0, stdout="new-file.txt\n")
+        return subprocess.CompletedProcess(cmd, 0)
+
+    monkeypatch.setattr(git, "run_process", fake_run_process)
+
+    assert git.tree_is_dirty() is True
+    assert calls == [
+        (["git", "diff", "--quiet"], False),
+        (["git", "diff", "--cached", "--quiet"], False),
+        (["git", "ls-files", "--others", "--exclude-standard"], True),
+    ]
+
+
+def test_tree_is_dirty_reraises_git_errors(monkeypatch: pytest.MonkeyPatch) -> None:
+    error = subprocess.CalledProcessError(128, ["git", "diff"])
+
+    def fake_run_process(cmd: list[str], capture_output: bool = False) -> subprocess.CompletedProcess[str]:
+        raise error
+
+    monkeypatch.setattr(git, "run_process", fake_run_process)
+
+    with pytest.raises(subprocess.CalledProcessError) as raised:
+        git.tree_is_dirty()
+
+    assert raised.value is error
 
 
 def test_file_is_dirty_returns_false_for_clean_file(monkeypatch: pytest.MonkeyPatch) -> None:
