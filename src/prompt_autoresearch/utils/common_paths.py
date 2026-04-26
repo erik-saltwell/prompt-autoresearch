@@ -25,7 +25,22 @@ def experiments_dir() -> Path:
 
 
 def experiment_dir(experiment_name: str) -> Path:
+    cwd = Path.cwd()
+    if cwd.name == experiment_name and (cwd / KnownPathnames.SETTINGS).exists():
+        return cwd
     return experiments_dir() / experiment_name
+
+
+def resolve_experiment_name(provided: str | None) -> str:
+    if provided is not None:
+        return provided
+    cwd = Path.cwd()
+    if (cwd / KnownPathnames.SETTINGS).exists():
+        return cwd.name
+    raise ValueError(
+        "No experiment name provided and current directory does not contain settings.yaml. "
+        "Either pass the experiment name explicitly or cd into the experiment directory."
+    )
 
 
 def outputs_dir(experiment_name: str) -> Path:

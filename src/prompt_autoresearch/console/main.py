@@ -14,6 +14,7 @@ from ..commands import (
     ReportKeyFilesCommand,
 )
 from ..protocols import CompositeLogger, LoggingProtocol
+from ..utils import common_paths
 from .file_logging_protocol import FileLogger
 from .rich_logging_protocol import RichConsoleLogger
 
@@ -33,22 +34,33 @@ def create_logger() -> LoggingProtocol:
     return CompositeLogger([console_logger, file_logger])
 
 
+_EXPERIMENT_NAME_HELP = "Experiment directory name. Optional when run from inside an experiment directory (one containing settings.yaml)."
+
+
+def _resolve_experiment_name(provided: str | None) -> str:
+    try:
+        return common_paths.resolve_experiment_name(provided)
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc), param_hint="experiment_name") from exc
+
+
 @app.command("perform-experiment")
 def perform_experiment(
-    experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")],
     hypothesis: Annotated[str, typer.Option("--hypothesis", help="Hypothesis tested by this run.")],
     experimental_change: Annotated[
         str,
         typer.Option("--change", help="The change made to the prompt in this run."),
     ],
+    experiment_name: Annotated[str | None, typer.Argument(help=_EXPERIMENT_NAME_HELP)] = None,
 ) -> None:
     """Run trial prompts and evaluate the outputs."""
-    PerformExperimentCommand(experiment_name=experiment_name, hypothesis_tested=hypothesis, change_to_prompt=experimental_change).execute(create_logger())
+    resolved_name = _resolve_experiment_name(experiment_name)
+    PerformExperimentCommand(experiment_name=resolved_name, hypothesis_tested=hypothesis, change_to_prompt=experimental_change).execute(create_logger())
 
 
 @app.command("read-journal")
 def read_journal(
-    experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")],
+    experiment_name: Annotated[str | None, typer.Argument(help=_EXPERIMENT_NAME_HELP)] = None,
     previous_entries: Annotated[
         int,
         typer.Option(
@@ -60,13 +72,17 @@ def read_journal(
     ] = 10,
 ) -> None:
     """Print the experiment journal."""
-    ReadJournalCommand(experiment_name=experiment_name, previous_entries=previous_entries).execute(create_logger())
+    resolved_name = _resolve_experiment_name(experiment_name)
+    ReadJournalCommand(experiment_name=resolved_name, previous_entries=previous_entries).execute(create_logger())
 
 
 @app.command("report-key-files")
-def report_key_files(experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")]) -> None:
+def report_key_files(
+    experiment_name: Annotated[str | None, typer.Argument(help=_EXPERIMENT_NAME_HELP)] = None,
+) -> None:
     """Print absolute paths to the key files for an experiment."""
-    ReportKeyFilesCommand(experiment_name=experiment_name).execute(create_logger())
+    resolved_name = _resolve_experiment_name(experiment_name)
+    ReportKeyFilesCommand(experiment_name=resolved_name).execute(create_logger())
 
 
 def _version_callback(value: bool) -> None:

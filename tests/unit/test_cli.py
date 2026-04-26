@@ -84,6 +84,54 @@ def test_perform_experiment_cli_delegates_to_command(monkeypatch: pytest.MonkeyP
     ]
 
 
+def test_perform_experiment_cli_resolves_name_from_cwd(monkeypatch: pytest.MonkeyPatch, tmp_path: pytest.TempPathFactory) -> None:
+    calls: list[tuple[dict[str, Any], object]] = []
+    logger = object()
+
+    class FakePerformExperimentCommand:
+        def __init__(self, **kwargs: Any) -> None:
+            self.kwargs = kwargs
+
+        def execute(self, command_logger: object) -> None:
+            calls.append((self.kwargs, command_logger))
+
+    monkeypatch.setattr(console_main, "PerformExperimentCommand", FakePerformExperimentCommand)
+    monkeypatch.setattr(console_main, "create_logger", lambda: logger)
+
+    exp_dir = tmp_path / "experiments" / "from_cwd"  # type: ignore[operator]
+    exp_dir.mkdir(parents=True)
+    (exp_dir / "settings.yaml").write_text("paths: {}\n")
+    monkeypatch.chdir(exp_dir)
+
+    result = runner.invoke(
+        app,
+        ["perform-experiment", "--hypothesis", "h", "--change", "c"],
+        color=False,
+    )
+
+    assert result.exit_code == 0, result.output
+    assert calls == [
+        (
+            {"experiment_name": "from_cwd", "hypothesis_tested": "h", "change_to_prompt": "c"},
+            logger,
+        )
+    ]
+
+
+def test_perform_experiment_cli_errors_when_no_name_and_no_settings_in_cwd(monkeypatch: pytest.MonkeyPatch, tmp_path: pytest.TempPathFactory) -> None:
+    monkeypatch.setattr(console_main, "PerformExperimentCommand", lambda **kwargs: None)
+    monkeypatch.chdir(tmp_path)  # type: ignore[arg-type]
+
+    result = runner.invoke(
+        app,
+        ["perform-experiment", "--hypothesis", "h", "--change", "c"],
+        color=False,
+    )
+
+    assert result.exit_code != 0
+    assert "experiment" in result.output.lower()
+
+
 def test_read_journal_cli_delegates_previous_entries(monkeypatch: pytest.MonkeyPatch) -> None:
     calls: list[tuple[dict[str, Any], object]] = []
     logger = object()
