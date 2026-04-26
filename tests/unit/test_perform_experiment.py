@@ -47,9 +47,7 @@ def test_generate_all_evaluated_results_caps_simultaneous_evaluations(monkeypatc
     async def fake_get_completion(system_prompt: str, user_prompt: str, model: ModelString, effort: ModelEffort) -> str:
         return f"{system_prompt} {user_prompt} {model} {effort}"
 
-    async def fake_evaluate_result(
-        trial_prompt: PromptData, trial_output: str, run_idx: int, settings: Settings
-    ) -> str:
+    async def fake_evaluate_result(trial_prompt: PromptData, trial_output: str, run_idx: int, settings: Settings) -> str:
         nonlocal active_evaluations, max_active_evaluations
         active_evaluations += 1
         max_active_evaluations = max(max_active_evaluations, active_evaluations)
@@ -57,8 +55,8 @@ def test_generate_all_evaluated_results_caps_simultaneous_evaluations(monkeypatc
         active_evaluations -= 1
         return f"evaluation-{run_idx}"
 
-    monkeypatch.setattr(perform_experiment, "build_trial_prompt", fake_build_trial_prompt)
-    monkeypatch.setattr(perform_experiment, "get_completion", fake_get_completion)
+    monkeypatch.setattr(perform_experiment.prompt_builder, "build_trial_prompt", fake_build_trial_prompt)
+    monkeypatch.setattr(perform_experiment.completions, "get_completion", fake_get_completion)
     monkeypatch.setattr(perform_experiment, "evaluate_result", fake_evaluate_result)
 
     results = asyncio.run(perform_experiment.generate_all_evaluated_results(_settings()))

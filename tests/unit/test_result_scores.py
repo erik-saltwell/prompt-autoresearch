@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from prompt_autoresearch.data import ScoreDimension, ScoreQuestion
-from prompt_autoresearch.helpers import get_low_scoring_questions, integrate_scores_into_dimensions
+from prompt_autoresearch.helpers.score_manager import get_low_scoring_questions, integrate_scores_into_dimensions
 
 
 class WarningLogger:

@@ -5,17 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "CLI: setup-experiment test",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "prompt_autoresearch",
-            "console": "integratedTerminal",
-            "args": [
-                "setup-experiment",
-                "test"
-            ]
-        },
-        {
             "name": "CLI: perform-experiment test",
             "type": "debugpy",
             "request": "launch",
@@ -24,6 +13,10 @@
             "args": [
                 "perform-experiment",
                 "test",
+                "--hypothesis",
+                "test-hypothesis",
+                "--change",
+                "test-change"
             ]
         },
         {
@@ -35,44 +28,6 @@
             "args": [
                 "read-journal",
                 "test"
-            ]
-        },
-        {
-            "name": "CLI: read-trial-prompt test",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "prompt_autoresearch",
-            "console": "integratedTerminal",
-            "args": [
-                "read-trial-prompt",
-                "test"
-            ]
-        },
-        {
-            "name": "CLI: update-results test",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "prompt_autoresearch",
-            "console": "integratedTerminal",
-            "args": [
-                "update-results",
-                "test",
-                "--branch",
-                "20260425_a",
-                "--commit-hash",
-                "abc123",
-                "--hypothesis",
-                "Sample hypothesis",
-                "--change",
-                "Sample prompt change",
-                "--total-score",
-                "104.5",
-                "--result",
-                "keep",
-                "--low-scoring-result",
-                "comp_01 needs more detail",
-                "--low-scoring-result",
-                "struct_02 needs clearer ordering",
             ]
         },
         {

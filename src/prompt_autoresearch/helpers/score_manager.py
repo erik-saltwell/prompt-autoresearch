@@ -51,9 +51,7 @@ def _get_question_from_question_id(question_id: str, dimension: ScoreDimension) 
     return next((question for question in dimension.questions if question.id == question_id), None)
 
 
-def integrate_scores_into_dimensions(
-    scores_json: str, dimensions: list[ScoreDimension], logger: WarningReporter | None = None
-) -> None:
+def integrate_scores_into_dimensions(scores_json: str, dimensions: list[ScoreDimension], logger: WarningReporter | None = None) -> None:
     start = scores_json.find("{")
     end = scores_json.rfind("}")
     if start == -1 or end == -1:
@@ -73,16 +71,12 @@ def integrate_scores_into_dimensions(
         tag = _get_tag_from_question_id(id)
         if len(tag) == 0:
             if logger is not None:
-                logger.report_warning(
-                    f"Evaluation score ID '{id}' does not include a dimension prefix; skipping score."
-                )
+                logger.report_warning(f"Evaluation score ID '{id}' does not include a dimension prefix; skipping score.")
             continue
         target_dimension: ScoreDimension | None = _get_dimension_by_tag(dimensions, tag)
         if target_dimension is None:
             if logger is not None:
-                logger.report_warning(
-                    f"Evaluation score ID '{id}' uses unknown dimension prefix '{tag}'; skipping score."
-                )
+                logger.report_warning(f"Evaluation score ID '{id}' uses unknown dimension prefix '{tag}'; skipping score.")
             continue
         target_question: ScoreQuestion | None = _get_question_from_question_id(id, target_dimension)
         if target_question is None:
@@ -111,13 +105,9 @@ def get_total_score(dimensions: list[ScoreDimension]) -> float:
 def get_low_scoring_questions(dimensions: list[ScoreDimension], high_score_floor: float) -> list[ScoreDimension]:
     results: list[ScoreDimension] = []
     for dimension in dimensions:
-        low_scoring_questions: list[ScoreQuestion] = [
-            question for question in dimension.questions if question.composite_score < high_score_floor
-        ]
+        low_scoring_questions: list[ScoreQuestion] = [question for question in dimension.questions if question.composite_score < high_score_floor]
         if not low_scoring_questions:
             continue
-        new_dimension: ScoreDimension = ScoreDimension(
-            dimension.name, dimension.description, dimension.tag, low_scoring_questions
-        )
+        new_dimension: ScoreDimension = ScoreDimension(dimension.name, dimension.description, dimension.tag, low_scoring_questions)
         results.append(new_dimension)
     return results

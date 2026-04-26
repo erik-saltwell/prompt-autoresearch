@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime
 from importlib.metadata import PackageNotFoundError, metadata
 from importlib.metadata import version as dist_version
 from typing import Annotated
@@ -13,10 +12,7 @@ from ..commands import (
     PerformExperimentCommand,
     ReadJournalCommand,
     ReportKeyFilesCommand,
-    SetupExperimentCommand,
-    UpdateExperimentResultsCommand,
 )
-from ..data import ExperimentResultString, JournalEntry
 from ..protocols import CompositeLogger, LoggingProtocol
 from .file_logging_protocol import FileLogger
 from .rich_logging_protocol import RichConsoleLogger
@@ -37,67 +33,40 @@ def create_logger() -> LoggingProtocol:
     return CompositeLogger([console_logger, file_logger])
 
 
-@app.command("setup-experiment")
-def setup_experiment(experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")]) -> None:
-    """Initialize a new experiment run."""
-    SetupExperimentCommand(experiment_name=experiment_name).execute(create_logger())
-
-
 @app.command("perform-experiment")
 def perform_experiment(
     experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")],
+    hypothesis: Annotated[str, typer.Option("--hypothesis", help="Hypothesis tested by this run.")],
+    experimental_change: Annotated[
+        str,
+        typer.Option("--change", help="The change made to the prompt in this run."),
+    ],
 ) -> None:
     """Run trial prompts and evaluate the outputs."""
-    PerformExperimentCommand(experiment_name=experiment_name).execute(create_logger())
+    PerformExperimentCommand(experiment_name=experiment_name, hypothesis_tested=hypothesis, change_to_prompt=experimental_change).execute(create_logger())
 
 
 @app.command("read-journal")
-def read_journal(experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")]) -> None:
+def read_journal(
+    experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")],
+    previous_entries: Annotated[
+        int,
+        typer.Option(
+            "--previous-entries",
+            "-n",
+            min=0,
+            help="Maximum number of most recent journal entries to print. Defaults to 10.",
+        ),
+    ] = 10,
+) -> None:
     """Print the experiment journal."""
-    ReadJournalCommand(experiment_name=experiment_name).execute(create_logger())
+    ReadJournalCommand(experiment_name=experiment_name, previous_entries=previous_entries).execute(create_logger())
 
 
 @app.command("report-key-files")
 def report_key_files(experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")]) -> None:
     """Print absolute paths to the key files for an experiment."""
     ReportKeyFilesCommand(experiment_name=experiment_name).execute(create_logger())
-
-
-@app.command("update-results")
-def update_results(
-    experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")],
-    branch: Annotated[str, typer.Option("--branch", help="Branch used for this experiment result.")],
-    commit: Annotated[str, typer.Option("--commit-hash", help="Commit hash for this experiment result.")],
-    hypothesis: Annotated[str, typer.Option("--hypothesis", help="Hypothesis tested by this experiment result.")],
-    experimental_change: Annotated[
-        str,
-        typer.Option("--change", help="Prompt or workflow change tested by this experiment result."),
-    ],
-    total_score: Annotated[float, typer.Option("--total-score", help="Total score for this experiment result.")],
-    result: Annotated[
-        ExperimentResultString,
-        typer.Option("--result", help="Must be either 'keep' or 'discard' to note if we committed the changes."),
-    ],
-    low_scoring_results: Annotated[
-        list[str] | None,
-        typer.Option("--low-scoring-result", help="Low-scoring result note. May be provided multiple times."),
-    ] = None,
-) -> None:
-    """Append a completed experiment result to the results log and journal."""
-    journal_entry = JournalEntry(
-        entry_date=datetime.now(),
-        branch=branch,
-        commit=commit,
-        hypothesis=hypothesis,
-        experimental_change=experimental_change,
-        total_score=total_score,
-        result=result,
-        low_scoring_results=low_scoring_results or [],
-    )
-    UpdateExperimentResultsCommand(
-        experiment_name=experiment_name,
-        journal_entry=journal_entry,
-    ).execute(create_logger())
 
 
 def _version_callback(value: bool) -> None:

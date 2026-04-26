@@ -14,7 +14,7 @@ class ExperimentResults:
     description: str
     total_score: float
     low_scoring_tests: int
-    created_at: datetime = field(default_factory=datetime.now)
+    experiment_datetime: datetime = field(default_factory=datetime.now)
 
     @classmethod
     def fields(cls) -> list[str]:
@@ -30,19 +30,19 @@ class ExperimentResults:
 
     @classmethod
     def from_tsv_line(cls, line: str) -> ExperimentResults:
-        created_at, total_score, low_scoring_tests, result, description, checkin_hash = line.rstrip("\n").split("\t")
+        experiment_datetime, total_score, low_scoring_tests, result, description, checkin_hash = line.rstrip("\n").split("\t")
         return cls(
             checkin_hash=checkin_hash,
             was_successful=result == ExperimentResultString.KEEP,
             description=description,
             total_score=float(total_score),
             low_scoring_tests=int(low_scoring_tests),
-            created_at=datetime.fromisoformat(created_at),
+            experiment_datetime=datetime.fromisoformat(experiment_datetime),
         )
 
     def to_fields(self) -> list[str]:
         return [
-            self.created_at.isoformat(),
+            self.experiment_datetime.isoformat(),
             str(self.total_score),
             str(self.low_scoring_tests),
             ExperimentResultString.KEEP.value if self.was_successful else ExperimentResultString.DISCARD.value,

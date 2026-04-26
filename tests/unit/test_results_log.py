@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 
 from prompt_autoresearch.data import ExperimentResults
-from prompt_autoresearch.helpers import append_results, initialize_results, load_results_from_file
+from prompt_autoresearch.helpers.results_log_manager import append_results, load_results_from_file, setup_results_if_necessary
 
 
 def test_experiment_results_fields_returns_tsv_header_order() -> None:
@@ -101,7 +101,7 @@ def test_experiment_results_from_tsv_line_parses_discard() -> None:
     assert result.was_successful is False
     assert result.total_score == 12.0
     assert result.low_scoring_tests == 7
-    assert result.created_at == datetime(2026, 4, 24, 12, 0, 0)
+    assert result.experiment_datetime == datetime(2026, 4, 24, 12, 0, 0)
 
 
 def test_experiment_results_round_trip_preserves_recorded_datetime() -> None:
@@ -119,27 +119,27 @@ def test_experiment_results_round_trip_preserves_recorded_datetime() -> None:
     assert restored == result
 
 
-def test_initialize_results_creates_file_when_it_does_not_exist(tmp_path: Path) -> None:
+def test_setup_results_if_necessary_creates_file_when_it_does_not_exist(tmp_path: Path) -> None:
     filepath = tmp_path / "results.tsv"
     header = "\t".join(ExperimentResults.fields())
 
-    initialize_results(filepath)
+    setup_results_if_necessary(filepath)
 
     assert filepath.read_text() == f"{header}\n"
 
 
-def test_initialize_results_preserves_existing_file(tmp_path: Path) -> None:
+def test_setup_results_if_necessary_preserves_existing_file(tmp_path: Path) -> None:
     filepath = tmp_path / "results.tsv"
     filepath.write_text("old content\n")
 
-    initialize_results(filepath)
+    setup_results_if_necessary(filepath)
 
     assert filepath.read_text() == "old content\n"
 
 
 def test_append_results_appends_one_tsv_line(tmp_path: Path) -> None:
     filepath = tmp_path / "results.tsv"
-    initialize_results(filepath)
+    setup_results_if_necessary(filepath)
     result = ExperimentResults("abc123", True, "improved baseline", 93.5, 2)
 
     append_results(result, filepath)
@@ -170,7 +170,7 @@ def test_append_results_initializes_empty_file_before_appending(tmp_path: Path) 
 
 def test_load_results_from_file_returns_empty_list_for_header_only_file(tmp_path: Path) -> None:
     filepath = tmp_path / "results.tsv"
-    initialize_results(filepath)
+    setup_results_if_necessary(filepath)
 
     assert load_results_from_file(filepath) == []
 
@@ -190,7 +190,7 @@ def test_load_results_from_file_returns_empty_list_for_missing_file(tmp_path: Pa
 
 def test_load_results_from_file_parses_non_empty_result_lines(tmp_path: Path) -> None:
     filepath = tmp_path / "results.tsv"
-    initialize_results(filepath)
+    setup_results_if_necessary(filepath)
     expected_results = [
         ExperimentResults("abc123", True, "improved baseline", 93.5, 2),
         ExperimentResults("def456", False, "worse output", 12.0, 7),

@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import ClassVar
 
 from .experiment_result_string import ExperimentResultString
 
 
 @dataclass
 class JournalEntry:
+    ENTRY_SEPARATOR: ClassVar[str] = "\n---new experiment---\n"
+
     entry_date: datetime
     branch: str
     commit: str
