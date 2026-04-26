@@ -12,6 +12,7 @@ from rich.console import Console
 from ..commands import (
     PerformExperimentCommand,
     ReadJournalCommand,
+    ReportKeyFilesCommand,
     SetupExperimentCommand,
     UpdateExperimentResultsCommand,
 )
@@ -54,6 +55,12 @@ def perform_experiment(
 def read_journal(experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")]) -> None:
     """Print the experiment journal."""
     ReadJournalCommand(experiment_name=experiment_name).execute(create_logger())
+
+
+@app.command("report-key-files")
+def report_key_files(experiment_name: Annotated[str, typer.Argument(help="Experiment directory name.")]) -> None:
+    """Print absolute paths to the key files for an experiment."""
+    ReportKeyFilesCommand(experiment_name=experiment_name).execute(create_logger())
 
 
 @app.command("update-results")

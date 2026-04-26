@@ -158,7 +158,7 @@ class PerformExperimentCommand(ExperimentBaseCommand):
                 )
         else:
             self.logger.report_message(
-                f"prompt at {settings.paths.trial_prompt} has not changed, nothing to commit/rever."
+                f"prompt at {settings.paths.trial_prompt} has not changed, nothing to commit/revert."
             )
 
         self.logger.report_message("Low scoring tests:")
