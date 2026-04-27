@@ -100,3 +100,20 @@
     - comp_03 8.8 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
     - corr_02 8.1 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
     - struct_02 8.8 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
+
+---new experiment---
+- **Date/time:** 2026-04-26T21:35:12.627299
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** comp_02 scores 8.8 in the current best (102.5). The rubric penalizes collapsing distinct session beats — including observations and discoveries — into combined entries. The comp_03 fix (which improved by 9 points) worked by adding explicit examples of what NOT to merge (thoughts+actions, decisions+actions). Applying the same pattern to observations: adding a sub-bullet under item 3 (Perceptions and Observations) with a concrete example of wrong behavior ('noticed X, then did Y' should be two entries, not one) should help the model keep observation beats separate from action beats.
+- **Change:** Added a sub-bullet under item 3 (Perceptions and Observations) in What to Capture: 'Separate observation entries from action entries: Do not merge an observation with the action that follows it. Kira noticed the door was ajar, then slipped through should produce two entries: one for noticing the door, one for slipping through.'
+- **Result:** discard
+- **Result summary:**
+  - Total score: 95.75
+  - Low-scoring criteria (6):
+    - comp_01 8.1 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 5.8 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 6.2 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_02 6.9 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
