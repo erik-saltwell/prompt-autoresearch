@@ -1,0 +1,17 @@
+
+---new experiment---
+- **Date/time:** 2026-04-26T20:29:31.651177
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** 168cc8d14930f9f18e3c0c2344104c728ebf12bd
+- **Hypothesis:** comp_03 is the lowest scoring criterion (3.9/max). It measures whether the logs preserve player characters' explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding. The current prompt instructs to capture these but they may be getting merged into action entries or omitted as seeming like table commentary. Adding explicit sub-rules with examples showing: (a) thought entries must be separate from action entries, (b) decisions must be their own entry even when obvious, and (c) minor stated thoughts like 'I don't trust him' must be captured.
+- **Change:** Added two bullet sub-points under item 5 (Thoughts/Feelings/Intentions/Suspicions) and two bullet sub-points under item 6 (Plans and Decisions) with concrete examples of incorrect merging behavior and explicit instructions to separate thought/decision entries from action entries.
+- **Result:** keep
+- **Result summary:**
+  - Total score: 102.5
+  - Low-scoring criteria (6):
+    - comp_01 8.8 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 8.8 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 8.8 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - corr_01 9.4 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
+    - corr_02 7.5 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
