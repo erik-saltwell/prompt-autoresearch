@@ -101,5 +101,5 @@ def reset_experiment_dir(experiment_name: str) -> None:
     # These directories will only have temporary feels that are ok to clean on each run.
     exp_dir: Path = experiment_dir(experiment_name)
     ensure_directory(exp_dir)
-    prepare_output_directory(logs_dir(experiment_name))
+    ensure_directory(logs_dir(experiment_name))
     prepare_output_directory(outputs_dir(experiment_name))

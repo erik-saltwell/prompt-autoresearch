@@ -16,7 +16,6 @@ from ..data import (
     Settings,
 )
 from ..helpers import branch_manager, journal_manager, prompt_builder, results_log_manager, score_manager
-from ..protocols import LoggingProtocol
 from ..tools import completions, git
 from ..utils import common_paths
 from .experiment_base_command import ExperimentBaseCommand
@@ -147,14 +146,9 @@ class PerformExperimentCommand(ExperimentBaseCommand):
     def name(self) -> str:
         return "Perform Experiment"
 
-    def execute(self, logger: LoggingProtocol) -> None:
+    def perform_necessary_setup(self, settings: Settings) -> None:
         self._last_score_info = None
         self._last_commit_hash = None
-        super().execute(logger)
-        if self._last_score_info is not None:
-            self.report_status(self._last_score_info, self._last_commit_hash)
-
-    def perform_necessary_setup(self, settings: Settings) -> None:
         common_paths.reset_experiment_dir(self.experiment_name)
         self.reset_counts(settings)
         branch_manager.setup_branch_if_necessary(self.experiment_name)

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(./**)",
+      "Edit(./trial_prompt.md)",
+      "Bash(uv run prompt-autoresearch:*)"
+    ]
+  }
+}

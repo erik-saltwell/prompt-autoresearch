@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from importlib.metadata import PackageNotFoundError, metadata
 from importlib.metadata import version as dist_version
 from typing import Annotated
@@ -15,7 +16,7 @@ from ..commands import (
     ReportKeyFilesCommand,
 )
 from ..protocols import CompositeLogger, LoggingProtocol
-from ..utils import common_paths
+from ..utils import Tracer, common_paths, initialize_request, initialize_tracing
 from .file_logging_protocol import FileLogger
 from .rich_logging_protocol import RichConsoleLogger
 
@@ -25,14 +26,19 @@ app = typer.Typer(
     help="Tools used by your coding agent to run autoresearch on your prompt.",
 )
 
-LOG_FILENAME: str = "prompt_autoresearch.log"
 
-
-def create_logger() -> LoggingProtocol:
+def create_logger(experiment_name: str) -> tuple[LoggingProtocol, Tracer]:
     console = Console()
     console_logger: RichConsoleLogger = RichConsoleLogger(console)
-    file_logger: FileLogger = FileLogger(LOG_FILENAME, verbose_training=True)
-    return CompositeLogger([console_logger, file_logger])
+    logfilename: str = datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".log"
+    file_logger: FileLogger = FileLogger(common_paths.logs_dir(experiment_name) / logfilename)
+
+    initialize_tracing(experiment_name)
+    request_id: str = initialize_request()
+
+    logger = CompositeLogger([console_logger, file_logger])
+    logger.report_message(f"[blue]Session id: {request_id}[/blue]")
+    return logger, Tracer()
 
 
 _EXPERIMENT_NAME_HELP = "Experiment directory name. Optional when run from inside an experiment directory (one containing settings.yaml)."
@@ -56,7 +62,10 @@ def perform_experiment(
 ) -> None:
     """Run trial prompts and evaluate the outputs."""
     resolved_name = _resolve_experiment_name(experiment_name)
-    PerformExperimentCommand(experiment_name=resolved_name, hypothesis_tested=hypothesis, change_to_prompt=experimental_change).execute(create_logger())
+    logger, tracer = create_logger(resolved_name)
+    PerformExperimentCommand(
+        experiment_name=resolved_name, hypothesis_tested=hypothesis, change_to_prompt=experimental_change, logger=logger, tracer=tracer
+    ).execute()
 
 
 @app.command("read-journal")
@@ -74,7 +83,8 @@ def read_journal(
 ) -> None:
     """Print the experiment journal."""
     resolved_name = _resolve_experiment_name(experiment_name)
-    ReadJournalCommand(experiment_name=resolved_name, previous_entries=previous_entries).execute(create_logger())
+    logger, tracer = create_logger(resolved_name)
+    ReadJournalCommand(experiment_name=resolved_name, previous_entries=previous_entries, logger=logger, tracer=tracer).execute()
 
 
 @app.command("report-key-files")
@@ -83,7 +93,8 @@ def report_key_files(
 ) -> None:
     """Print absolute paths to the key files for an experiment."""
     resolved_name = _resolve_experiment_name(experiment_name)
-    ReportKeyFilesCommand(experiment_name=resolved_name).execute(create_logger())
+    logger, tracer = create_logger(resolved_name)
+    ReportKeyFilesCommand(experiment_name=resolved_name, logger=logger, tracer=tracer).execute()
 
 
 @app.command("init-agent")
@@ -93,7 +104,8 @@ def init_agent(
 ) -> None:
     """Scaffold the auto-researcher subagent, slash command, and permissions in this experiment's .claude directory."""
     resolved_name = _resolve_experiment_name(experiment_name)
-    InitAgentCommand(experiment_name=resolved_name, force=force).execute(create_logger())
+    logger, tracer = create_logger(resolved_name)
+    InitAgentCommand(experiment_name=resolved_name, force=force, logger=logger, tracer=tracer).execute()
 
 
 def _version_callback(value: bool) -> None:
