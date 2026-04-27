@@ -135,3 +135,21 @@
     - focus_01 8.0 - The logs exclude mechanical process and rules detail, such as dice results, arithmetic, skill names, modifiers, damage numbers, hit points, resource accounting, and rule references, while preserving fictional outcomes and persistent fictional state changes produced by mechanics.
     - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
     - struct_03 8.4 - Every log entry is a complete standalone sentence written as an in-fiction record of what happened, not as notes, fragments, labels, table commands, verbatim player utterances, or transcript-style dialogue.
+
+---new experiment---
+- **Date/time:** 2026-04-26T21:56:53.487362
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** The current best (102.5) has comp_02 at 8.8 and multiple criteria slightly below perfect. The schema example at the bottom of the prompt describes entry formats but doesn't explicitly state that each distinct beat = its own entry. Adding 'Each distinct in-game beat — including individual actions, events, observations, speeches, stated thoughts, stated decisions, and consequences — must be its own entry' directly in the schema preamble reinforces the granularity requirement at the point where the model is reading the output format. This is a structural placement (output spec) rather than adding more rules to What to Capture, which has caused regressions.
+- **Change:** Added one sentence to the schema preamble: 'Each entry in both arrays must be a single complete sentence. Each distinct in-game beat — including individual actions, events, observations, speeches, stated thoughts, stated decisions, and consequences — must be its own entry.'
+- **Result:** discard
+- **Result summary:**
+  - Total score: 93.75
+  - Low-scoring criteria (7):
+    - comp_01 5.5 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 6.5 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 8.1 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_02 6.9 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_02 8.0 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
+    - struct_03 9.4 - Every log entry is a complete standalone sentence written as an in-fiction record of what happened, not as notes, fragments, labels, table commands, verbatim player utterances, or transcript-style dialogue.
