@@ -180,7 +180,12 @@ class PerformExperimentCommand(ExperimentBaseCommand):
         maximum_possible_total_score: float = score_manager.get_highest_possible_score(dimensions)
         low_scoring_questions: list[ScoreDimension] = score_manager.get_low_scoring_questions(dimensions, settings.high_score_threshold)
 
-        return ScoredResults(low_scoring_questions, current_total_score, maximum_possible_total_score, previous_high_score)
+        results: ScoredResults = ScoredResults(low_scoring_questions, current_total_score, maximum_possible_total_score, previous_high_score)
+        self.tracer.add_context("total_score", results.total_score)
+        self.tracer.add_context("previous_high_score", results.previous_high_score)
+        self.tracer.add_context("low_questions_count", len(results.get_all_questions_as_strings()))
+        self.tracer.add_context("is_new_high_score", results.is_new_high_score)
+        return results
 
     def commit_prompt_if_necessary(self, score_info: ScoredResults, settings: Settings) -> str | None:
         if not git.file_is_dirty(settings.paths.trial_prompt):
@@ -258,14 +263,19 @@ class PerformExperimentCommand(ExperimentBaseCommand):
         commit_decision_made: bool = False
         try:
             experiment_datetime: datetime = datetime.now()
+            self.tracer.add_context("experiment_datetime", experiment_datetime)
             evaluation_results: list[str] = self.get_all_evaluation_results(settings, self.on_input_done, self.on_eval_done)
 
             score_info: ScoredResults = self.process_scores(evaluation_results, settings)
 
             commit_hash: str | None = self.commit_prompt_if_necessary(score_info, settings)
+
             commit_decision_made = True
             if commit_hash is not None:  # None means that no commit happened
+                self.tracer.add_context("commit_hash", commit_hash)
                 self.update_result_logs(commit_hash, score_info, experiment_datetime, settings)
+            else:
+                self.tracer.add_context("commit_hash", "NO_CHANGES")
             self.report_low_scores(score_info)
             self._last_score_info = score_info
             self._last_commit_hash = commit_hash

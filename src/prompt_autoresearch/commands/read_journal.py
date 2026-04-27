@@ -18,5 +18,7 @@ class ReadJournalCommand(ExperimentBaseCommand):
         return "Read Journal"
 
     def process_experiment(self, settings: Settings, experiment_dir: Path) -> None:
-        common_paths.reset_experiment_dir(self.experiment_name)
-        self.logger.report_message(f"{journal_manager.load_journal(common_paths.journal_filepath(self.experiment_name), self.previous_entries)}")
+        journal_text = journal_manager.load_journal(common_paths.journal_filepath(self.experiment_name), self.previous_entries)
+        self.logger.report_message(journal_text)
+        self.tracer.add_context("previous_entries_count", self.previous_entries)
+        self.tracer.add_context("journal_length", len(journal_text))

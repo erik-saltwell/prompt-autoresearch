@@ -16,8 +16,12 @@ class ReportKeyFilesCommand(ExperimentBaseCommand):
         return "Report Key Files"
 
     def process_experiment(self, settings: Settings, experiment_dir: Path) -> None:
-        self.logger.report_message(f"Results log: {common_paths.results_filepath(self.experiment_name).resolve()}")
-        self.logger.report_message(
-            f"Experiment journal: {common_paths.journal_filepath(self.experiment_name).resolve()}"
-        )
-        self.logger.report_message(f"Trial prompt: {settings.paths.trial_prompt.resolve()}")
+        results_log_path: Path = common_paths.results_filepath(self.experiment_name).resolve()
+        journal_path: Path = common_paths.journal_filepath(self.experiment_name).resolve()
+        prompt_path: Path = settings.paths.trial_prompt.resolve()
+        self.logger.report_message(f"Results log: {results_log_path}")
+        self.logger.report_message(f"Experiment journal: {journal_path}")
+        self.logger.report_message(f"Trial prompt: {prompt_path}")
+        self.tracer.add_context("results_log_path", results_log_path)
+        self.tracer.add_context("journal_path", journal_path)
+        self.tracer.add_context("prompt_path", prompt_path)
