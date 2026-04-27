@@ -33,3 +33,20 @@
     - corr_01 8.8 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
     - corr_02 9.4 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
     - struct_02 8.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
+
+---new experiment---
+- **Date/time:** 2026-04-26T20:50:53.442121
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** corr_02 scores 7.5 in the current best prompt (102.5 total). The rubric penalizes over-resolving uncertainty — when the transcript is ambiguous about speaker identity, outcome, or perception, the cleaned transcript should preserve that ambiguity. The previous attempt to fix this by adding extensive examples under the Live Session Log section hurt comp_03/02. Instead, adding a single concise rule in the Critical Requirements section about not over-resolving uncertainty should target corr_02 more precisely without disrupting the detailed content-capture instructions.
+- **Change:** Added one bullet to the Critical Requirements section: 'Do not over-resolve uncertainty: when the transcript is unclear about a speaker's identity, whether an outcome succeeded, or whether a perception reflects reality, write the entry with the same level of certainty (or uncertainty) the transcript carries — use hedged wording like appeared to, seemed to, believed, or reportedly rather than asserting a definite fact.'
+- **Result:** discard
+- **Result summary:**
+  - Total score: 99.25
+  - Low-scoring criteria (6):
+    - comp_01 8.4 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 6.2 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 8.8 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_02 7.8 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_02 8.8 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
