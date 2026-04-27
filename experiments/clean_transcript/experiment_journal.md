@@ -170,3 +170,19 @@
     - comp_04 8.1 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
     - corr_02 8.1 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
     - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
+
+---new experiment---
+- **Date/time:** 2026-04-26T22:29:07.735090
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** corr_02 scores 7.5 in the current best (102.5), making it the lowest-scoring criterion. It measures whether logs preserve uncertainty — specifically not over-resolving perceptions, speaker identity, or outcomes. Previous attempts to fix corr_02 by adding uncertainty rules to the Live Session Log section or Critical Requirements caused regressions in comp_02/03. This attempt targets the issue at the source: item 3 (Perceptions and Observations) in What to Capture. When a character perceives something, the log should record it as a perception rather than upgrading it to a confirmed world-fact. Adding a clarification at item 3 specifically says to write perceptions as perceptions, not confirmed facts. This is scoped narrowly to the Perceptions item and does not touch the areas (items 5/6, Critical Requirements, Live Session Log uncertainty phrasing) that caused prior regressions.
+- **Change:** Added a sentence to item 3 (Perceptions and Observations) in What to Capture: 'Write perceptions as perceptions, not as confirmed facts: if a character sees or hears something, that character perceived it — do not upgrade a perception into a confirmed world-fact unless the transcript confirms it independently.'
+- **Result:** discard
+- **Result summary:**
+  - Total score: 95.875
+  - Low-scoring criteria (5):
+    - comp_01 8.8 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 7.1 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 4.8 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_02 5.9 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
