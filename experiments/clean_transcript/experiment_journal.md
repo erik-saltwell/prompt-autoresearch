@@ -482,3 +482,19 @@
     - corr_01 9.4 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
     - corr_02 6.9 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
     - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
+
+---new experiment---
+- **Date/time:** 2026-04-27T11:31:19.278947
+- **Branch:** autoresearch/clean_transcript_20260427_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** corr_02 scores 7.8 in the current best (101.75). The counterexamples show the model adding specificity beyond the transcript: paraphrasing 'the organization' as 'the Program or another group,' attributing statements to named characters when the transcript doesn't clearly identify the speaker, and adding the detail 'closed' to a hand gesture that was uncertain in transcript. The existing Critical Requirements rule 'Do not infer or construct facts that are not in the transcript' should prevent this but doesn't. Extending rule 2 with 'Do not resolve vague transcript terms into more specific ones — if the transcript says the organization, do not write the Program; if the transcript does not name a speaker, do not guess' adds concrete examples of the exact failure mode, making the existing rule more actionable without adding a new bullet. This is a same-sentence extension of an existing rule, not an addition.
+- **Change:** Extended Critical Requirements rule 2 from 'Do not infer or construct facts that are not in the transcript.' to 'Do not infer or construct facts that are not in the transcript. Do not resolve vague transcript terms into more specific ones — if the transcript says the organization, do not write the Program; if the transcript does not name a speaker, do not guess.' Added concrete examples of the corr_02 failure mode to make the existing rule more actionable.
+- **Result:** discard
+- **Result summary:**
+  - Total score: 97.0
+  - Low-scoring criteria (5):
+    - comp_01 7.5 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 5.8 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 7.5 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_02 6.9 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
