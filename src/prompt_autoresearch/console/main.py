@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime
 from importlib.metadata import PackageNotFoundError, metadata
 from importlib.metadata import version as dist_version
 from typing import Annotated
@@ -26,12 +25,14 @@ app = typer.Typer(
     help="Tools used by your coding agent to run autoresearch on your prompt.",
 )
 
+LOGGER_FILENAME = "autoprompt.log"
+
 
 def create_logger(experiment_name: str) -> tuple[LoggingProtocol, Tracer]:
     console = Console()
     console_logger: RichConsoleLogger = RichConsoleLogger(console)
-    logfilename: str = datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".log"
-    file_logger: FileLogger = FileLogger(common_paths.logs_dir(experiment_name) / logfilename)
+    # logfilename: str = datetime.now().strftime("%Y%m%d_%H_%M_%S") + ".log"
+    file_logger: FileLogger = FileLogger(common_paths.logs_dir(experiment_name) / LOGGER_FILENAME)
 
     initialize_tracing(experiment_name)
     request_id: str = initialize_request()

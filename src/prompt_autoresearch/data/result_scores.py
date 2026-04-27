@@ -13,6 +13,7 @@ class ScoreQuestion:
     id: str
     question_text: str
     scores: list[int] = field(default_factory=list)
+    counter_examples: list[str] = field(default_factory=list)
 
     @property
     def composite_score(self) -> float:
@@ -25,6 +26,7 @@ class ScoreQuestion:
 
     def clear_scores(self) -> None:
         self.scores.clear()
+        self.counter_examples.clear()
 
 
 @dataclass

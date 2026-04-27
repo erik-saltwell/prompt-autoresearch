@@ -91,6 +91,22 @@ def integrate_scores_into_dimensions(scores_json: str, dimensions: list[ScoreDim
             continue
         target_question.scores.append(max(1, min(numeric_score, int(HIGHEST_SCORE_FOR_A_RESPONSE))))
 
+    for dimension_block in data.get("counter_examples", []):
+        for criterion in dimension_block.get("criteria", []):
+            cid = criterion.get("id")
+            if not cid:
+                continue
+            tag = _get_tag_from_question_id(cid)
+            target_dimension = _get_dimension_by_tag(dimensions, tag)
+            if target_dimension is None:
+                continue
+            target_question = _get_question_from_question_id(cid, target_dimension)
+            if target_question is None:
+                continue
+            for ce in criterion.get("counter_examples", []):
+                if ce != "No non-trivial counterexamples found.":
+                    target_question.counter_examples.append(ce)
+
 
 def get_highest_possible_score(dimensions: list[ScoreDimension]) -> float:
     result: float = HIGHEST_COMPOSITE_SCORE_FOR_A_QUESTION * sum([len(dimension.questions) for dimension in dimensions])

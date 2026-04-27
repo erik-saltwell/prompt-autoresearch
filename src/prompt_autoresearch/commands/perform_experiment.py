@@ -234,6 +234,8 @@ class PerformExperimentCommand(ExperimentBaseCommand):
             self.logger.report_message(f"{low_dimension.name} - {low_dimension.description}")
             for question in low_dimension.questions:
                 self.logger.report_message(f"  ID:{question.id} Score:{question.composite_score:.1f} criteria:{question.question_text}")
+                for ce in question.counter_examples:
+                    self.logger.report_message(f"    {ce}")
 
     def _classify_status(self, score_info: ScoredResults, commit_hash: str | None) -> str:
         if score_info.total_score >= score_info.maximum_possible_score:

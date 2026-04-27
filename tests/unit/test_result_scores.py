@@ -117,3 +117,67 @@ def test_integrate_scores_warns_when_score_id_does_not_match_question() -> None:
 
     assert logger.warnings == ["Evaluation score ID 'comp_02' does not match a rubric question; skipping score."]
     assert dimensions[0].questions[0].scores == []
+
+
+def _dimensions_with_one_question() -> list[ScoreDimension]:
+    return [
+        ScoreDimension(
+            name="Completeness",
+            description="Completeness checks",
+            tag="comp",
+            questions=[ScoreQuestion("comp_01", "Includes key beats")],
+        )
+    ]
+
+
+def _eval_json(counter_examples: list[str]) -> str:
+    import json
+
+    return json.dumps(
+        {
+            "counter_examples": [
+                {
+                    "dimension": "Completeness",
+                    "criteria": [{"id": "comp_01", "text": "Includes key beats", "counter_examples": counter_examples}],
+                }
+            ],
+            "scores": {"comp_01": 2},
+        }
+    )
+
+
+def test_integrate_scores_parses_counterexamples() -> None:
+    dimensions = _dimensions_with_one_question()
+
+    integrate_scores_into_dimensions(_eval_json(["Counterexample 1: missing the ending"]), dimensions)
+
+    assert dimensions[0].questions[0].counter_examples == ["Counterexample 1: missing the ending"]
+
+
+def test_integrate_scores_skips_no_counterexample_sentinel() -> None:
+    dimensions = _dimensions_with_one_question()
+
+    integrate_scores_into_dimensions(_eval_json(["No non-trivial counterexamples found."]), dimensions)
+
+    assert dimensions[0].questions[0].counter_examples == []
+
+
+def test_integrate_scores_accumulates_counterexamples_across_runs() -> None:
+    dimensions = _dimensions_with_one_question()
+
+    integrate_scores_into_dimensions(_eval_json(["Counterexample 1: first run issue"]), dimensions)
+    integrate_scores_into_dimensions(_eval_json(["Counterexample 1: second run issue"]), dimensions)
+
+    assert dimensions[0].questions[0].counter_examples == [
+        "Counterexample 1: first run issue",
+        "Counterexample 1: second run issue",
+    ]
+
+
+def test_integrate_scores_ignores_missing_counter_examples_key() -> None:
+    dimensions = _dimensions_with_one_question()
+
+    integrate_scores_into_dimensions('{"scores": {"comp_01": 3}}', dimensions)
+
+    assert dimensions[0].questions[0].counter_examples == []
+    assert dimensions[0].questions[0].scores == [3]

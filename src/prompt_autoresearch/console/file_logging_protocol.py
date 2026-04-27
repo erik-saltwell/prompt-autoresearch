@@ -28,7 +28,7 @@ class FileLogger(LoggingProtocol):
     def __init__(self, filename: str | Path) -> None:
         path = Path(filename)
         path.parent.mkdir(parents=True, exist_ok=True)
-        self._file = path.open("w")
+        self._file = path.open("a")
         self._console = Console(
             file=self._file,
             no_color=True,
