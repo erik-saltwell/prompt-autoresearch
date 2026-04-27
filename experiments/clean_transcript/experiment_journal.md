@@ -204,3 +204,21 @@
     - corr_01 8.8 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
     - corr_02 6.5 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
     - struct_03 9.4 - Every log entry is a complete standalone sentence written as an in-fiction record of what happened, not as notes, fragments, labels, table commands, verbatim player utterances, or transcript-style dialogue.
+
+---new experiment---
+- **Date/time:** 2026-04-26T22:54:03.283556
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** comp_02 scores 8.8 in the current best (102.5). Looking at the specific comp_02 counterexamples across multiple discarded experiments, a recurring pattern is that the model captures the act of finding/reading something but omits the specific content discovered. For example: finding emails and noting they concerned Philip Roth, but missing that those emails specifically referred to Danielle's 'friends and the others.' The model captures 'they reviewed the laptop' but not 'they found references to friends and the others in Philip's emails.' Item 3 (Perceptions and Observations) says to capture what characters 'read' but doesn't say to capture the specific content of what was read. Adding a sentence that specifically says 'when a character reads a document or message, capture the specific content found — names, claims, relationships — not just the act of reading' should address this gap in comp_02 without touching items 5/6 that affect comp_03.
+- **Change:** Added a sentence to item 3 (Perceptions and Observations): 'When a character reads or reviews a document, message, or record, capture the specific content found — the names, claims, relationships, dates, or warnings discovered — not only the act of reading or the general subject.'
+- **Result:** discard
+- **Result summary:**
+  - Total score: 96.0
+  - Low-scoring criteria (7):
+    - comp_01 8.8 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 5.9 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 7.0 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - corr_01 8.8 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
+    - corr_02 8.1 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - focus_01 8.8 - The logs exclude mechanical process and rules detail, such as dice results, arithmetic, skill names, modifiers, damage numbers, hit points, resource accounting, and rule references, while preserving fictional outcomes and persistent fictional state changes produced by mechanics.
+    - struct_02 8.8 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
