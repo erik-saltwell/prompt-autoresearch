@@ -533,3 +533,20 @@
     - corr_02 8.1 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
     - focus_01 8.8 - The logs exclude mechanical process and rules detail, such as dice results, arithmetic, skill names, modifiers, damage numbers, hit points, resource accounting, and rule references, while preserving fictional outcomes and persistent fictional state changes produced by mechanics.
     - struct_03 7.4 - Every log entry is a complete standalone sentence written as an in-fiction record of what happened, not as notes, fragments, labels, table commands, verbatim player utterances, or transcript-style dialogue.
+
+---new experiment---
+- **Date/time:** 2026-04-27T12:03:49.417276
+- **Branch:** autoresearch/clean_transcript_20260427_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** comp_02 scores 7.1 in the current best (101.75). A previous attempt adding 'Each distinct in-game beat must be its own entry' to Live Session Log scored exactly 101.75 (same as best) — comp_02 improved from 7.1 to 7.8 and corr_02 improved from 7.8 to 8.8, but comp_01 dropped from 9.4 to 7.1 because the model put recap-level content into session_log. The key flaw in that attempt was the granularity rule didn't also remind the model that session_log covers only current live-play events. This attempt adds TWO sentences: (1) explicit scope reminder that session_log covers only current live-play events and past-session events belong in recap_log, and (2) the granularity rule scoped to 'live-play' beats. The scope reminder should prevent the comp_01 regression that happened in the previous attempt, while the granularity rule should still improve comp_02.
+- **Change:** Added two bullets to the top of the Live Session Log section: (1) Modified the first bullet to add 'Session_log covers only what happens during the current live-play session — past-session events belong in recap_log, not here.' (2) Added a second bullet: 'Each distinct live-play discovery, revelation, observation, or event must be its own session_log entry. Do not combine two live-play beats into one entry.' These two changes together address both the scope boundary (preventing comp_01 regression) and granularity (improving comp_02).
+- **Result:** discard
+- **Result summary:**
+  - Total score: 97.25
+  - Low-scoring criteria (6):
+    - comp_01 8.4 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 5.1 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 6.2 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_02 8.8 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
