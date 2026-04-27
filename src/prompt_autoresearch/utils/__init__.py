@@ -1,6 +1,6 @@
 from .process_runner import run_process
 from .text_fragments import FragmentID, get_fragment, render_fragment
-from .tracer import Tracer, initialize_request, initialize_tracing
+from .tracer import Tracer, dur, fmt, initialize_request, initialize_tracing
 
 __all__ = [
     "run_process",
@@ -10,4 +10,6 @@ __all__ = [
     "initialize_tracing",
     "initialize_request",
     "Tracer",
+    "fmt",
+    "dur",
 ]

@@ -9,7 +9,7 @@ import typer
 
 from ..data import Settings
 from ..protocols import CommandProtocol, LoggingProtocol
-from ..utils import Tracer, common_paths
+from ..utils import Tracer, common_paths, dur
 
 
 @dataclass
@@ -40,7 +40,7 @@ class ExperimentBaseCommand(ABC, CommandProtocol):
             self.tracer.add_context("success", "True")
             end_time: datetime = datetime.now()
             duration = end_time - start_time
-            self.tracer.add_context("duration", (duration))
+            self.tracer.add_context("duration", (dur(duration)))
             self.tracer.log(self.safe_name)
             self.logger.report_message(f"{self.name()} completed in {duration}.")
         except Exception as exc:
