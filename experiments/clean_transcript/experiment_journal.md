@@ -117,3 +117,21 @@
     - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
     - corr_02 6.9 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
     - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
+
+---new experiment---
+- **Date/time:** 2026-04-26T21:45:59.416733
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** corr_02 scores 7.5 in the current best (102.5). Previous attempts to improve corr_02 by adding uncertainty rules hurt comp_02. However, re-reading the rubric text: it penalizes over-resolving 'speakers, character identities' specifically. Looking at the input transcripts, they frequently contain 'Indeterminate_Speaker' labels where the diarizer couldn't identify who was speaking. The model may be guessing the speaker's identity rather than preserving ambiguity. Adding a specific rule to NOT guess Indeterminate_Speaker identity and to use 'an unidentified voice' instead addresses corr_02 directly without adding new uncertainty hedging that might confuse the model on content capture.
+- **Change:** Added one bullet to the Live Session Log section specifically about Indeterminate_Speaker attribution: 'When the transcript labels a speaker as Indeterminate_Speaker or otherwise fails to identify who is speaking, do not guess or infer the speaker's identity — write the entry using a description like an unidentified voice or someone in the group rather than assigning the statement to a specific character. Only attribute a statement to a named character if the transcript itself identifies them as the speaker.'
+- **Result:** discard
+- **Result summary:**
+  - Total score: 96.5
+  - Low-scoring criteria (7):
+    - comp_01 8.4 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 7.8 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 6.9 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - corr_02 7.8 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - focus_01 8.0 - The logs exclude mechanical process and rules detail, such as dice results, arithmetic, skill names, modifiers, damage numbers, hit points, resource accounting, and rule references, while preserving fictional outcomes and persistent fictional state changes produced by mechanics.
+    - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
+    - struct_03 8.4 - Every log entry is a complete standalone sentence written as an in-fiction record of what happened, not as notes, fragments, labels, table commands, verbatim player utterances, or transcript-style dialogue.
