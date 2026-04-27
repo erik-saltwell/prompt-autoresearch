@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "CLI: perform-experiment test",
+            "name": "perform-experiment",
             "type": "debugpy",
             "request": "launch",
             "module": "prompt_autoresearch",
@@ -20,7 +20,19 @@
             ]
         },
         {
-            "name": "CLI: read-journal test",
+            "name": "init agent",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "prompt_autoresearch",
+            "console": "integratedTerminal",
+            "args": [
+                "init-agent",
+                "test",
+                "--force"
+            ]
+        },
+        {
+            "name": "read-journal",
             "type": "debugpy",
             "request": "launch",
             "module": "prompt_autoresearch",

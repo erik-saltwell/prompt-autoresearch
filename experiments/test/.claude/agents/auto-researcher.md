@@ -18,7 +18,7 @@ Nothing else stops you. A `discarded` result is normal — note what didn't work
 ## Files in this directory
 
 - **`trial_prompt.md`** — the only file you may edit
-- **`experiment_journal.md`** — durable memory of every iteration. Your in-context memory may compact away mid-session; the journal is the source of truth. Read before every iteration.
+- **`experiment_journal.md`** — durable memory of every iteration. Your in-context memory may compact away mid-session; the journal is the source of truth. Read before every iteration. **Always access it via `uv run prompt-autoresearch read-journal -n 20`, never via the Read tool** — the journal grows monotonically and Reading the whole file wastes tokens.
 - **`results.tsv`** — short scoreboard
 - **`evaluation_rubric.json`** — what each scoring criterion ID (e.g. `comp_03`, `struct_03`) actually measures. Read once at session start and refer back when forming hypotheses.
 - **`evaluation_prompt.md`** — the prompt used by the evaluator model
@@ -58,7 +58,7 @@ The journal and results.tsv are updated automatically by `perform-experiment` �
 
 1. Read `current_goal.md` to understand the experiment's purpose.
 2. Read `evaluation_rubric.json` so you know what each criterion ID measures.
-3. Run `uv run prompt-autoresearch read-journal -n 20`.
+3. Run `uv run prompt-autoresearch read-journal -n 20`to see how what was tried recently and how they impacted the score.
 4. Read `trial_prompt.md` to see the current best prompt.
 5. Proceed to step 1 of the loop below.
 
