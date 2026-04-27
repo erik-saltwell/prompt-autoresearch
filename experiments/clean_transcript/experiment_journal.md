@@ -186,3 +186,21 @@
     - comp_03 4.8 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
     - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
     - corr_02 5.9 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+
+---new experiment---
+- **Date/time:** 2026-04-26T22:46:43.349876
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** corr_02 scores 7.5 in the current best (102.5). The rubric penalizes logs that over-resolve uncertainty. Previous attempts to fix corr_02 by adding rules to What to Capture items or Critical Requirements caused regressions in comp_02/03. The Recaps section currently says to write narrator-style in-fiction records but says nothing about preserving uncertainty — this may cause the model to present recap content (beliefs, suspicions, conclusions) as confirmed world-facts. For example writing had concluded when the recap said they believed. Adding a targeted rule to the Recaps section specifically — without touching What to Capture items 1-7 or the Critical Requirements — should improve corr_02 by making the model use hedged wording for recap entries that represent beliefs rather than confirmed facts.
+- **Change:** Added one bullet to the Recaps section: Preserve uncertainty in recap entries: if the recap describes what characters believed, suspected, or concluded rather than confirmed facts, use wording such as had believed, had suspected, or had concluded — do not restate a character belief as a confirmed world-fact.
+- **Result:** discard
+- **Result summary:**
+  - Total score: 94.375
+  - Low-scoring criteria (7):
+    - comp_01 6.4 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 6.2 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 7.8 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_01 8.8 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
+    - corr_02 6.5 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_03 9.4 - Every log entry is a complete standalone sentence written as an in-fiction record of what happened, not as notes, fragments, labels, table commands, verbatim player utterances, or transcript-style dialogue.
