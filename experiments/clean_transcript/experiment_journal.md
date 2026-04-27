@@ -464,3 +464,21 @@
     - comp_03 8.8 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
     - corr_01 9.4 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
     - corr_02 8.8 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+
+---new experiment---
+- **Date/time:** 2026-04-27T11:20:11.721979
+- **Branch:** autoresearch/clean_transcript_20260427_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** struct_02 scores 9.4 in the current best (101.75) but has a counterexample showing background investigation beats already in recap_log reappearing in session_log. The current prompt says 'Do not silently blend recap events into present-session events' in the Recaps section, but this phrasing is about not blending session events into recap — it doesn't explicitly prevent the reverse (recap events appearing in session_log). Adding 'Do not include events already captured in recap_log as past-session facts — session_log covers only events occurring during the current live-play session' to the Live Session Log section clarifies the boundary: each log has exclusive scope. This should reduce struct_02 violations (recap bleeding into session) and may free the model's attention to focus session_log entries on session-unique events, improving comp_02.
+- **Change:** Modified the first bullet of Live Session Log from 'Put the events of live play in session_log.' to 'Put the events of live play in session_log. Do not include events already captured in recap_log as past-session facts — session_log covers only events occurring during the current live-play session.' This adds a boundary clarification preventing recap content from bleeding into session_log.
+- **Result:** discard
+- **Result summary:**
+  - Total score: 95.125
+  - Low-scoring criteria (7):
+    - comp_01 8.4 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 6.1 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 6.2 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 8.8 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_01 9.4 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
+    - corr_02 6.9 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
