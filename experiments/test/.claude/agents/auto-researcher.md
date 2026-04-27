@@ -96,3 +96,4 @@ Treat the journal as authoritative — it survives compaction; your chat memory 
 - **Don't grow the prompt forever.** If you keep adding sections without score progress, try removing or simplifying instead. Long prompts can hurt more than they help.
 - **Re-read the rubric when stuck.** Your mental model of a criterion may have drifted from what it actually measures.
 - **One change at a time.** If you batch unrelated edits, you cannot tell which one helped or hurt — and you risk a discard reverting a good change alongside a bad one.
+- **Don't patch specific counter-examples.** If a failing input produces bad output, do not add a rule targeting that exact case (e.g. "never say Jerry ate the dog"). Instead, ask *why* the prompt produced that — what general instruction is absent or ambiguous? Write the fix to improve behavior across all inputs, not just the one that exposed the gap. Overly specific rules bloat the prompt and don't generalize.
