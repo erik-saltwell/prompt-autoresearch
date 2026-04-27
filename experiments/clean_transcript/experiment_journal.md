@@ -415,3 +415,19 @@
     - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
     - corr_02 9.4 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
     - struct_02 7.8 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
+
+---new experiment---
+- **Date/time:** 2026-04-27T10:46:36.055251
+- **Branch:** autoresearch/clean_transcript_20260427_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** comp_02 scores 7.1 in the current best (101.75). The counterexamples show a persistent pattern of end-of-session events being omitted: 'Bruce returned home to find Sugar Cookies dead' appears in both comp_02 and comp_04 counterexamples across multiple evaluations. This is an epilogue beat that occurs after the main action concludes. The current Live Session Log section has no explicit instruction about session endings or epilogue events. Adding a bullet that says 'Include all events from the session ending and epilogue, including consequences, outcomes, and revelations that occur after the main action concludes — these end-of-session beats are required entries' directly names the category that is persistently omitted and provides explicit authority to include it. This targets comp_02 (and implicitly comp_04) without touching What to Capture items 3, 5, or 6 that have caused regressions.
+- **Change:** Added one bullet to the Live Session Log section: 'Include all events from the session ending and epilogue, including consequences, outcomes, and revelations that occur after the main action concludes — these end-of-session beats are required entries.' Placed after the ordering rule and before the uncertainty rule.
+- **Result:** discard
+- **Result summary:**
+  - Total score: 94.5
+  - Low-scoring criteria (5):
+    - comp_01 5.9 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 6.9 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 5.2 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 8.8 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_02 7.8 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
