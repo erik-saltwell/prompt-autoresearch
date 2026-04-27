@@ -328,3 +328,20 @@
     - focus_01 9.4 - The logs exclude mechanical process and rules detail, such as dice results, arithmetic, skill names, modifiers, damage numbers, hit points, resource accounting, and rule references, while preserving fictional outcomes and persistent fictional state changes produced by mechanics.
     - focus_02 9.0 - The logs exclude out-of-character table banter, jokes, side-conversations, scheduling, recording or app discussion, and real-world discussion unless they directly communicate explicit in-game facts needed for recap or live-play understanding.
     - struct_03 8.4 - Every log entry is a complete standalone sentence written as an in-fiction record of what happened, not as notes, fragments, labels, table commands, verbatim player utterances, or transcript-style dialogue.
+
+---new experiment---
+- **Date/time:** 2026-04-27T09:11:03.281112
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** comp_01 scores 8.8 in the best run (102.5). It measures whether recap_log captures explicit recap events as separate concrete beats rather than collapsing them. The counterexamples show specific recap details omitted: El Paso sheriff sequence (multiple facts collapsed into one), wallet card content, UTEP shipping detail. In a previous experiment, adding 'when in doubt, include the entry' to Critical Requirements improved corr_02 to 8.8 but dropped comp_01 to 6.5 (it was applied to the whole prompt). This experiment adds a targeted inclusion tiebreaker ONLY to the Recaps section: 'When uncertain whether a recap detail is significant enough to include, include it. Each missed recap beat is a permanent gap in the record.' By scoping this to the Recaps section only, it targets comp_01 without affecting session_log completeness criteria or the uncertainty balance that affects corr_02.
+- **Change:** Added one bullet at the end of the Recaps section: 'When uncertain whether a recap detail is significant enough to include, include it. Each missed recap beat is a permanent gap in the record.' This gives the model an explicit inclusion tiebreaker for recap entries only, without applying the same rule to session_log where it previously caused comp_01 to drop.
+- **Result:** discard
+- **Result summary:**
+  - Total score: 100.75
+  - Low-scoring criteria (6):
+    - comp_01 8.8 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 8.8 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 8.4 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_01 9.4 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
+    - corr_02 6.1 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
