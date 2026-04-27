@@ -345,3 +345,20 @@
     - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
     - corr_01 9.4 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
     - corr_02 6.1 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+
+---new experiment---
+- **Date/time:** 2026-04-27T09:18:06.078118
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** The current best score is 102.5 with corr_02 at 7.5 being the main drag. Every attempt to ADD or MODIFY rules has caused regressions, especially in corr_02 and comp_02/03. The 'Translate Mechanics to Fiction' section (4 bullets with 2 examples) provides instructions already implicit in 'Mechanical Process' rule (What to Remove item 2) and the general What to Capture items 1-2. It may be adding noise or anchoring the model toward specific entry formats that conflict with corr_02 requirements. Removing this section simplifies the prompt without removing any essential instruction. Shorter prompts sometimes produce better results by reducing instruction conflicts and letting the model's baseline understanding guide it. This tests whether removing this section improves scores by eliminating potential interference.
+- **Change:** Removed the entire 'Translate Mechanics to Fiction' section (4 bullets with 2 examples). This section instructed the model to not record dice rolls/rule mechanics and to record fictional outcomes instead, with examples like 'Ward forced the door open' vs 'Ward succeeded on the Strength roll.' The information is already covered by Mechanical Process in What to Remove.
+- **Result:** discard
+- **Result summary:**
+  - Total score: 96.0
+  - Low-scoring criteria (6):
+    - comp_01 9.4 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 5.5 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 6.5 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 7.5 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_02 7.8 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_03 9.4 - Every log entry is a complete standalone sentence written as an in-fiction record of what happened, not as notes, fragments, labels, table commands, verbatim player utterances, or transcript-style dialogue.
