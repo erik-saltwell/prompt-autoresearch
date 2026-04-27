@@ -1,0 +1,2 @@
+datetime	total_score	low_score_count	result	description	commit_hash
+2026-04-27 10:24:27	101.75	7	keep	Added one bullet to the Recaps section: 'Each distinct recap fact must be its own entry. Do not combine two events, discoveries, decisions, or clues into a single entry — if the recap mentions three separate past events, that is three entries, not one.' This is placed after the bullet listing what to include and before the format instruction, where it directly modifies behavior for how many entries the recap produces per fact.	dfcc9defb5ae11c9739ccec7bbc00bba6339a606

@@ -380,3 +380,21 @@
     - corr_01 8.8 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
     - corr_02 5.5 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
     - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
+
+---new experiment---
+- **Date/time:** 2026-04-27T10:24:27.617495
+- **Branch:** autoresearch/clean_transcript_20260427_000
+- **Commit:** dfcc9defb5ae11c9739ccec7bbc00bba6339a606
+- **Hypothesis:** comp_01 scores 8.8 in the current best (102.5). It measures whether recap_log captures each distinct recap beat as a SEPARATE entry. The current Recaps section says to include everything but never explicitly states that each distinct fact must be its own entry. The comp_01 counterexamples show multiple events/clues being collapsed into a single recap entry. Adding 'Each distinct recap fact must be its own entry. Do not combine two events, discoveries, decisions, or clues into a single entry — if the recap mentions three separate past events, that is three entries, not one.' directly in the Recaps section gives the model an explicit one-fact-per-entry rule for recaps. This targets comp_01 without touching What to Capture items 5/6 that affect comp_03 or the uncertainty rule that affects corr_02.
+- **Change:** Added one bullet to the Recaps section: 'Each distinct recap fact must be its own entry. Do not combine two events, discoveries, decisions, or clues into a single entry — if the recap mentions three separate past events, that is three entries, not one.' This is placed after the bullet listing what to include and before the format instruction, where it directly modifies behavior for how many entries the recap produces per fact.
+- **Result:** keep
+- **Result summary:**
+  - Total score: 101.75
+  - Low-scoring criteria (7):
+    - comp_01 9.4 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 7.1 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 9.4 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_01 9.4 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
+    - corr_02 7.8 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
