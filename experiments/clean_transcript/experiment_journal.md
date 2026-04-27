@@ -275,3 +275,20 @@
     - comp_03 8.1 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
     - comp_04 7.1 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
     - corr_02 7.5 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+
+---new experiment---
+- **Date/time:** 2026-04-27T08:31:42.212623
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** comp_01 and comp_02 each score 8.8 in the current best (102.5). The counterexamples show specific beats being omitted. The 'Repeated Non-Information' rule says 'Collapse pure repetition that adds no new fictional information.' The model may be interpreting 'no new information' broadly, collapsing entries where subsequent statements add subtle nuance (a character name, an outcome detail, a conditional clause). Narrowing this rule to 'verbatim or near-verbatim repetition with zero new information' and explicitly saying 'if any new fact, name, outcome, or nuance is added, capture both as separate entries' should prevent the model from over-applying the collapse rule to related but distinct beats. This is a replacement of one existing bullet in What to Remove, not an addition, so it should carry lower regression risk than adding new sections.
+- **Change:** Replaced the Repeated Non-Information rule in What to Remove. Old: 'Collapse pure repetition that adds no new fictional information. If repeated questioning produces a new in-game fact, capture the new fact.' New: 'Collapse only verbatim or near-verbatim repetition with zero new information. If any new fact, name, outcome, or nuance is added, capture both versions as separate entries.' This makes the collapse threshold much higher, requiring truly identical repetition before collapsing.
+- **Result:** discard
+- **Result summary:**
+  - Total score: 96.25
+  - Low-scoring criteria (6):
+    - comp_01 6.8 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 9.4 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 6.5 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_01 8.4 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
+    - corr_02 5.9 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
