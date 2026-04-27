@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Callable
-from dataclasses import KW_ONLY, dataclass
+from dataclasses import KW_ONLY, dataclass, field
 from datetime import datetime
 from itertools import chain
 from pathlib import Path
@@ -16,11 +16,21 @@ from ..data import (
     Settings,
 )
 from ..helpers import branch_manager, journal_manager, prompt_builder, results_log_manager, score_manager
+from ..protocols import LoggingProtocol
 from ..tools import completions, git
 from ..utils import common_paths
 from .experiment_base_command import ExperimentBaseCommand
 
 DISCARDED_HASH_INDICATOR: str = "NO_COMMIT"  # used to indicate in log files that prompt was not committed, so there is no hash
+
+# Machine-parseable status sentinels emitted as the last stdout line of perform-experiment.
+# Consumed by the auto-research loop to decide whether to continue, stop, or react to a discard.
+EXPERIMENT_STATUS_PREFIX: str = "EXPERIMENT_STATUS:"
+EXPERIMENT_STATUS_PERFECT: str = "perfect"
+EXPERIMENT_STATUS_IMPROVED: str = "improved"
+EXPERIMENT_STATUS_DISCARDED: str = "discarded"
+EXPERIMENT_STATUS_UNCHANGED: str = "unchanged"
+EXPERIMENT_STATUS_CRASHED: str = "crashed"
 
 
 async def evaluate_result(trial_prompt: PromptData, trial_output: str, run_idx: int, settings: Settings) -> str:
@@ -111,6 +121,8 @@ class PerformExperimentCommand(ExperimentBaseCommand):
     total_evals: int = 0
     completed_inputs: int = 0
     completed_evals: int = 0
+    _last_score_info: ScoredResults | None = field(default=None, init=False)
+    _last_commit_hash: str | None = field(default=None, init=False)
 
     def reset_counts(self, settings: Settings) -> None:
         self.total_inputs = len(settings.paths.input_filenames)
@@ -134,6 +146,13 @@ class PerformExperimentCommand(ExperimentBaseCommand):
 
     def name(self) -> str:
         return "Perform Experiment"
+
+    def execute(self, logger: LoggingProtocol) -> None:
+        self._last_score_info = None
+        self._last_commit_hash = None
+        super().execute(logger)
+        if self._last_score_info is not None:
+            self.report_status(self._last_score_info, self._last_commit_hash)
 
     def perform_necessary_setup(self, settings: Settings) -> None:
         common_paths.reset_experiment_dir(self.experiment_name)
@@ -210,17 +229,47 @@ class PerformExperimentCommand(ExperimentBaseCommand):
             for question in low_dimension.questions:
                 self.logger.report_message(f"  ID:{question.id} Score:{question.composite_score:.1f} criteria:{question.question_text}")
 
+    def _classify_status(self, score_info: ScoredResults, commit_hash: str | None) -> str:
+        if score_info.total_score >= score_info.maximum_possible_score:
+            return EXPERIMENT_STATUS_PERFECT
+        if commit_hash is None:
+            return EXPERIMENT_STATUS_UNCHANGED
+        if score_info.is_new_high_score:
+            return EXPERIMENT_STATUS_IMPROVED
+        return EXPERIMENT_STATUS_DISCARDED
+
+    def report_status(self, score_info: ScoredResults, commit_hash: str | None) -> None:
+        status = self._classify_status(score_info, commit_hash)
+        self.logger.report_message(f"{EXPERIMENT_STATUS_PREFIX} {status} total={score_info.total_score} max={score_info.maximum_possible_score}")
+
+    def _revert_prompt_safely(self, settings: Settings) -> None:
+        try:
+            git.revert_file(settings.paths.trial_prompt)
+        except Exception as exc:
+            self.logger.report_warning(f"Failed to revert trial prompt during crash recovery: {exc}")
+
     def process_experiment(self, settings: Settings, experiment_dir: Path) -> None:
         self.perform_necessary_setup(settings)
         self.report_progress()
 
-        experiment_datetime: datetime = datetime.now()
-        evaluation_results: list[str] = self.get_all_evaluation_results(settings, self.on_input_done, self.on_eval_done)
+        # KeyboardInterrupt is intentionally NOT caught: Ctrl-C is a user "stop now" and they may
+        # want to inspect any dirty edit. Only Exception is caught for crash recovery.
+        commit_decision_made: bool = False
+        try:
+            experiment_datetime: datetime = datetime.now()
+            evaluation_results: list[str] = self.get_all_evaluation_results(settings, self.on_input_done, self.on_eval_done)
 
-        score_info: ScoredResults = self.process_scores(evaluation_results, settings)
-        self.logger.report_message(f"Experiment Result: {score_info.total_score} of {score_info.maximum_possible_score} possible.")
+            score_info: ScoredResults = self.process_scores(evaluation_results, settings)
 
-        commit_hash: str | None = self.commit_prompt_if_necessary(score_info, settings)
-        if commit_hash is not None:  # None means that no commit happened
-            self.update_result_logs(commit_hash, score_info, experiment_datetime, settings)
-        self.report_low_scores(score_info)
+            commit_hash: str | None = self.commit_prompt_if_necessary(score_info, settings)
+            commit_decision_made = True
+            if commit_hash is not None:  # None means that no commit happened
+                self.update_result_logs(commit_hash, score_info, experiment_datetime, settings)
+            self.report_low_scores(score_info)
+            self._last_score_info = score_info
+            self._last_commit_hash = commit_hash
+        except Exception:
+            if not commit_decision_made:
+                self._revert_prompt_safely(settings)
+            self.logger.report_message(f"{EXPERIMENT_STATUS_PREFIX} {EXPERIMENT_STATUS_CRASHED}")
+            raise

@@ -28,6 +28,7 @@ def test_report_key_files_reports_absolute_paths(tmp_path: Path, monkeypatch) ->
                 '  evaluation_prompt: "evaluation_prompt.md"',
                 '  trial_prompt: "trial_prompt.md"',
                 '  eval_rubric: "rubric.md"',
+                '  current_goal: "current_goal.md"',
                 "  input_filenames:",
                 '    - "inputs/one.md"',
                 "trial_model:",

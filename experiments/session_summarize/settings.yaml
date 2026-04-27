@@ -5,6 +5,7 @@ paths:
   evaluation_prompt: "evaluation_prompt.md"
   trial_prompt: "trial_prompt.md"
   eval_rubric: "evaluation_rubric.json"
+  current_goal: "current_goal.md"
   input_filenames:
     - "inputs/20260203.md"
     - "inputs/20260225.md"

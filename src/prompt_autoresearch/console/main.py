@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from rich.console import Console
 
 from ..commands import (
+    InitAgentCommand,
     PerformExperimentCommand,
     ReadJournalCommand,
     ReportKeyFilesCommand,
@@ -83,6 +84,16 @@ def report_key_files(
     """Print absolute paths to the key files for an experiment."""
     resolved_name = _resolve_experiment_name(experiment_name)
     ReportKeyFilesCommand(experiment_name=resolved_name).execute(create_logger())
+
+
+@app.command("init-agent")
+def init_agent(
+    experiment_name: Annotated[str | None, typer.Argument(help=_EXPERIMENT_NAME_HELP)] = None,
+    force: Annotated[bool, typer.Option("--force", help="Overwrite existing .claude files if present.")] = False,
+) -> None:
+    """Scaffold the auto-researcher subagent, slash command, and permissions in this experiment's .claude directory."""
+    resolved_name = _resolve_experiment_name(experiment_name)
+    InitAgentCommand(experiment_name=resolved_name, force=force).execute(create_logger())
 
 
 def _version_callback(value: bool) -> None:

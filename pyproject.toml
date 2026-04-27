@@ -6,6 +6,7 @@ readme = "README.md"
 authors = [{ name = "Erik Saltwell", email = "erik.saltwell@gmail.com" }]
 requires-python = ">=3.11"
 dependencies = [
+    "jinja2>=3.1.0",
     "litellm>=1.83.0",
     "pydantic>=2.13.3",
     "python-dotenv>=1.2.1",

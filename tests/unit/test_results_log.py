@@ -26,7 +26,7 @@ def test_experiment_results_to_fields_serializes_keep_result() -> None:
         description="improved baseline",
         total_score=93.5,
         low_scoring_tests=2,
-        created_at=created_at,
+        experiment_datetime=created_at,
     )
 
     fields = result.to_fields()
@@ -43,7 +43,7 @@ def test_experiment_results_to_fields_serializes_discard_result() -> None:
         description="worse output",
         total_score=12.0,
         low_scoring_tests=7,
-        created_at=created_at,
+        experiment_datetime=created_at,
     )
 
     fields = result.to_fields()
@@ -89,7 +89,7 @@ def test_experiment_results_from_tsv_line() -> None:
         description="improved baseline",
         total_score=93.5,
         low_scoring_tests=2,
-        created_at=datetime(2026, 4, 24, 12, 0, 0),
+        experiment_datetime=datetime(2026, 4, 24, 12, 0, 0),
     )
 
 
@@ -111,7 +111,7 @@ def test_experiment_results_round_trip_preserves_recorded_datetime() -> None:
         description="improved baseline",
         total_score=93.5,
         low_scoring_tests=2,
-        created_at=datetime(2026, 4, 24, 12, 0, 0),
+        experiment_datetime=datetime(2026, 4, 24, 12, 0, 0),
     )
 
     restored = ExperimentResults.from_tsv_line("\t".join(result.to_fields()))

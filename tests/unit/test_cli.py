@@ -29,6 +29,27 @@ def test_help() -> None:
     assert "perform-experiment" in result.output
     assert "read-journal" in result.output
     assert "report-key-files" in result.output
+    assert "init-agent" in result.output
+
+
+def test_init_agent_cli_delegates_to_command(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[dict[str, Any], object]] = []
+    logger = object()
+
+    class FakeInitAgentCommand:
+        def __init__(self, **kwargs: Any) -> None:
+            self.kwargs = kwargs
+
+        def execute(self, command_logger: object) -> None:
+            calls.append((self.kwargs, command_logger))
+
+    monkeypatch.setattr(console_main, "InitAgentCommand", FakeInitAgentCommand)
+    monkeypatch.setattr(console_main, "create_logger", lambda: logger)
+
+    result = runner.invoke(app, ["init-agent", "session_summarize", "--force"], color=False)
+
+    assert result.exit_code == 0, result.output
+    assert calls == [({"experiment_name": "session_summarize", "force": True}, logger)]
 
 
 def test_version() -> None:

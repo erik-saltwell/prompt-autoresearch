@@ -19,6 +19,7 @@ def test_settings_load_resolves_input_filenames_relative_to_settings_file(tmp_pa
                 '  evaluation_prompt: "evaluation_prompt.md"',
                 '  trial_prompt: "trial_prompt.md"',
                 '  eval_rubric: "evaluation_rubric.json"',
+                '  current_goal: "current_goal.md"',
                 "  input_filenames:",
                 '    - "inputs/foo.md"',
                 '    - "inputs/bar.md"',

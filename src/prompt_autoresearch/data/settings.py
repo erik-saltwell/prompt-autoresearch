@@ -25,6 +25,7 @@ class PathSettings(BaseModel):
     evaluation_prompt: Path
     trial_prompt: Path
     eval_rubric: Path
+    current_goal: Path
     input_filenames: tuple[Path, ...] = Field(min_length=1)
 
 
@@ -60,10 +61,8 @@ class Settings(BaseModel):
                 "evaluation_prompt": _resolve_from_settings_dir(settings.paths.evaluation_prompt, settings_dir),
                 "trial_prompt": _resolve_from_settings_dir(settings.paths.trial_prompt, settings_dir),
                 "eval_rubric": _resolve_from_settings_dir(settings.paths.eval_rubric, settings_dir),
-                "input_filenames": tuple(
-                    _resolve_from_settings_dir(input_filename, settings_dir)
-                    for input_filename in settings.paths.input_filenames
-                ),
+                "current_goal": _resolve_from_settings_dir(settings.paths.current_goal, settings_dir),
+                "input_filenames": tuple(_resolve_from_settings_dir(input_filename, settings_dir) for input_filename in settings.paths.input_filenames),
             }
         )
 
