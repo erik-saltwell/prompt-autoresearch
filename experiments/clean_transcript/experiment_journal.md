@@ -398,3 +398,20 @@
     - corr_01 9.4 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
     - corr_02 7.8 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
     - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
+
+---new experiment---
+- **Date/time:** 2026-04-27T10:35:14.671821
+- **Branch:** autoresearch/clean_transcript_20260427_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** comp_02 scores 7.1 in the current best (101.75), making it the lowest-scoring criterion. The counterexamples consistently show omissions of specific discovery content: the model captures the act of finding/reviewing a source (laptop, emails, records) but omits the specific information found within it. For example, 'they reviewed Philip Roth's emails' is captured but 'the emails revealed he helped clients bypass security checks' is omitted. This is a recurring two-beat pattern: act of finding + content found. Adding a sub-bullet under item 3 (Perceptions and Observations) that explicitly says 'capture the content of discoveries separately from the act of finding' with a concrete two-entry example should train the model to produce both beats, targeting comp_02 without touching items 5/6 (comp_03) or uncertainty rules (corr_02).
+- **Change:** Added a sub-bullet under item 3 (Perceptions and Observations) in What to Capture: 'Capture the content of discoveries separately from the act of finding: When a character reads a document, searches a laptop, or reviews a record and finds specific information (a name, a claim, a relationship, a warning, a link between entities), that content is a separate entry from the act of reading or searching. Provides a two-entry example showing the act of finding and the content found as separate entries.
+- **Result:** discard
+- **Result summary:**
+  - Total score: 95.625
+  - Low-scoring criteria (6):
+    - comp_01 6.1 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 6.1 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 6.9 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_02 9.4 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_02 7.8 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
