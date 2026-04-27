@@ -241,3 +241,21 @@
     - focus_01 8.0 - The logs exclude mechanical process and rules detail, such as dice results, arithmetic, skill names, modifiers, damage numbers, hit points, resource accounting, and rule references, while preserving fictional outcomes and persistent fictional state changes produced by mechanics.
     - focus_02 8.8 - The logs exclude out-of-character table banter, jokes, side-conversations, scheduling, recording or app discussion, and real-world discussion unless they directly communicate explicit in-game facts needed for recap or live-play understanding.
     - struct_03 8.8 - Every log entry is a complete standalone sentence written as an in-fiction record of what happened, not as notes, fragments, labels, table commands, verbatim player utterances, or transcript-style dialogue.
+
+---new experiment---
+- **Date/time:** 2026-04-27T08:07:47.499401
+- **Branch:** autoresearch/clean_transcript_20260426_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** comp_01 and comp_02 each score 8.8 in the current best (102.5). Both measure whether the cleaned transcript captures all in-game beats at high resolution rather than compressing. The counterexamples consistently show specific events being omitted — the model is making triage decisions, judging some beats as too minor or implied. The current prompt says 'Prefer many precise entries over fewer broad entries. A too-short log is a failure.' This is directive but doesn't address the decision heuristic. Replacing it with 'When in doubt, include the entry. A missed in-game beat cannot be recovered; an extra entry does little harm. Err toward inclusion, not compression. A too-short log is a failure.' gives the model an explicit tiebreaker: always include, never skip. This targets comp_01/02 without touching items 5/6 (which affect comp_03) or adding new sections.
+- **Change:** Replaced 'Prefer many precise entries over fewer broad entries. A too-short log is a failure.' with 'When in doubt, include the entry. A missed in-game beat cannot be recovered; an extra entry does little harm. Err toward inclusion, not compression. A too-short log is a failure.' in the Critical Requirements section. This adds an explicit inclusion tiebreaker to guide the model when deciding whether a beat is worth its own entry.
+- **Result:** discard
+- **Result summary:**
+  - Total score: 100.25
+  - Low-scoring criteria (7):
+    - comp_01 6.5 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 8.1 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 8.8 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_01 9.4 - Every entry in the logs is directly supported by the raw transcript. Concise paraphrase is allowed, but the logs must not introduce hallucinated events, fabricated dialogue, new causal claims, unsupported interiority, or outcomes not explicitly supported by the transcript.
+    - corr_02 8.8 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_02 9.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
