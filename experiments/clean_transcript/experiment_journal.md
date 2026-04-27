@@ -498,3 +498,20 @@
     - comp_03 7.5 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
     - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
     - corr_02 6.9 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+
+---new experiment---
+- **Date/time:** 2026-04-27T11:42:02.814141
+- **Branch:** autoresearch/clean_transcript_20260427_000
+- **Commit:** NO_COMMIT
+- **Hypothesis:** corr_02 scores 7.8 in the current best (101.75). One consistent counterexample type is the model paraphrasing vague transcript terms into more specific ones when converting dialogue to indirect narration: 'the organization' becomes 'the Program or another group tracking them.' The existing item 4 (Things Said) allows paraphrase freely without restricting specificity drift. Adding 'When paraphrasing, preserve the original level of specificity — do not replace a vague term with a more specific one (e.g., if a speaker says the organization, do not write the Program)' directly in item 4 targets the specific failure mode without adding a new section or modifying Critical Requirements. This is narrowly scoped to the paraphrasing behavior within Things Said and should not affect how the model handles actions, thoughts, observations, or decisions in other items.
+- **Change:** Added one sentence to the end of item 4 (Things Said) in What to Capture: 'When paraphrasing, preserve the original level of specificity — do not replace a vague term with a more specific one (e.g., if a speaker says the organization, do not write the Program).' This addresses the corr_02 failure mode of specificity drift in paraphrase without touching other items.
+- **Result:** discard
+- **Result summary:**
+  - Total score: 97.375
+  - Low-scoring criteria (6):
+    - comp_01 7.8 - If the transcript contains a recap of past in-game events, recap_log captures the explicit recap as separate concrete beats rather than collapsing multiple events, discoveries, decisions, clues, relationships, unresolved problems, ongoing risks, or prior developments into vague summary statements.
+    - comp_02 6.2 - session_log includes separate entries or clearly separable sentence-level beats for the distinct in-game actions, events, observations, discoveries, revelations, spoken statements, and situation changes that occur during live play, rather than collapsing them into only major plot summaries.
+    - comp_03 7.5 - The logs preserve the player characters’ explicit decisions, plans, intentions, stated thoughts, suspicions, and stated changes in understanding when those are present in the transcript.
+    - comp_04 9.4 - The logs account for the fictional consequences of attempts and conflicts, including successes, failures, partial successes, costs, harm, recovery, delays, changed risks, and newly available options when present in the transcript.
+    - corr_02 8.1 - The logs preserve uncertainty and attribution from the transcript, using cautious wording when facts, speakers, character identities, perceptions, or outcomes are unclear rather than over-resolving them.
+    - struct_02 8.4 - Entries within recap_log and session_log are ordered according to the transcript’s presentation unless the transcript itself clearly establishes a different in-fiction sequence; recap facts remain separate from live-session events.
