@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 
 from prompt_autoresearch.data import ExperimentResults
@@ -31,7 +31,7 @@ def test_experiment_results_to_fields_serializes_keep_result() -> None:
 
     fields = result.to_fields()
 
-    assert fields[0] == "2026-04-24T12:00:00"
+    assert fields[0] == "2026-04-24 12:00:00"
     assert fields[1:] == ["93.5", "2", "keep", "improved baseline", "abc123"]
 
 
@@ -48,7 +48,7 @@ def test_experiment_results_to_fields_serializes_discard_result() -> None:
 
     fields = result.to_fields()
 
-    assert fields[0] == "2026-04-24T12:00:01"
+    assert fields[0] == "2026-04-24 12:00:01"
     assert fields[1:] == ["12.0", "7", "discard", "worse output", "def456"]
 
 
@@ -56,6 +56,21 @@ def test_experiment_results_to_fields_uses_construction_datetime() -> None:
     result = ExperimentResults("abc123", True, "improved baseline", 93.5, 2)
 
     assert result.to_fields()[0] == result.to_fields()[0]
+
+
+def test_experiment_results_to_fields_converts_aware_datetime_to_local_time() -> None:
+    aware_datetime = datetime(2026, 4, 24, 19, 0, 0, tzinfo=UTC)
+    result = ExperimentResults(
+        checkin_hash="abc123",
+        was_successful=True,
+        description="improved baseline",
+        total_score=93.5,
+        low_scoring_tests=2,
+        experiment_datetime=aware_datetime,
+    )
+    expected_local_datetime = aware_datetime.astimezone().replace(tzinfo=None)
+
+    assert result.to_fields()[0] == expected_local_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def test_convert_results_to_string_returns_header_for_empty_iterable() -> None:
@@ -79,7 +94,7 @@ def test_convert_results_to_string_preserves_result_order() -> None:
 
 
 def test_experiment_results_from_tsv_line() -> None:
-    line = "2026-04-24T12:00:00\t93.5\t2\tkeep\timproved baseline\tabc123\n"
+    line = "2026-04-24 12:00:00\t93.5\t2\tkeep\timproved baseline\tabc123\n"
 
     result = ExperimentResults.from_tsv_line(line)
 
@@ -94,7 +109,7 @@ def test_experiment_results_from_tsv_line() -> None:
 
 
 def test_experiment_results_from_tsv_line_parses_discard() -> None:
-    line = "2026-04-24T12:00:00\t12.0\t7\tdiscard\tworse output\tdef456"
+    line = "2026-04-24 12:00:00\t12.0\t7\tdiscard\tworse output\tdef456"
 
     result = ExperimentResults.from_tsv_line(line)
 
@@ -117,6 +132,23 @@ def test_experiment_results_round_trip_preserves_recorded_datetime() -> None:
     restored = ExperimentResults.from_tsv_line("\t".join(result.to_fields()))
 
     assert restored == result
+
+
+def test_experiment_results_round_trip_removes_timezone_from_aware_datetime() -> None:
+    aware_datetime = datetime(2026, 4, 24, 12, 30, 0, tzinfo=timezone(timedelta(hours=-7)))
+    result = ExperimentResults(
+        checkin_hash="abc123",
+        was_successful=True,
+        description="improved baseline",
+        total_score=93.5,
+        low_scoring_tests=2,
+        experiment_datetime=aware_datetime,
+    )
+
+    restored = ExperimentResults.from_tsv_line("\t".join(result.to_fields()))
+
+    assert restored.experiment_datetime.tzinfo is None
+    assert restored.experiment_datetime == aware_datetime.astimezone().replace(tzinfo=None)
 
 
 def test_setup_results_if_necessary_creates_file_when_it_does_not_exist(tmp_path: Path) -> None:

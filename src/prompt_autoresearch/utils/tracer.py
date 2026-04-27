@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Protocol, TextIO
 
@@ -10,16 +10,9 @@ import structlog
 from structlog.typing import Processor
 
 from prompt_autoresearch.utils.common_paths import ensure_directory, logs_dir
+from prompt_autoresearch.utils.formatting import DATETIME_FORMAT
 
 log_file: TextIO | None = None
-
-
-def dur(duration: timedelta) -> str:
-    return f"{duration.total_seconds():.3f}"
-
-
-def fmt(dt: datetime) -> str:
-    return dt.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def initialize_tracing(experiment_name: str, indent: int | None = None) -> None:
@@ -38,7 +31,7 @@ def initialize_tracing(experiment_name: str, indent: int | None = None) -> None:
         processors=[
             structlog.contextvars.merge_contextvars,
             structlog.processors.add_log_level,
-            structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M:%S"),
+            structlog.processors.TimeStamper(fmt=DATETIME_FORMAT),
             structlog.processors.dict_tracebacks,
             json_renderer,
         ],

@@ -17,7 +17,7 @@ from ..data import (
 )
 from ..helpers import branch_manager, journal_manager, prompt_builder, results_log_manager, score_manager
 from ..tools import completions, git
-from ..utils import common_paths, fmt
+from ..utils import common_paths, datetime_format
 from .experiment_base_command import ExperimentBaseCommand
 
 DISCARDED_HASH_INDICATOR: str = "NO_COMMIT"  # used to indicate in log files that prompt was not committed, so there is no hash
@@ -265,7 +265,7 @@ class PerformExperimentCommand(ExperimentBaseCommand):
         commit_decision_made: bool = False
         try:
             experiment_datetime: datetime = datetime.now()
-            self.tracer.add_context("experiment_datetime", fmt(experiment_datetime))
+            self.tracer.add_context("experiment_datetime", datetime_format(experiment_datetime))
             evaluation_results: list[str] = self.get_all_evaluation_results(settings, self.on_input_done, self.on_eval_done)
 
             score_info: ScoredResults = self.process_scores(evaluation_results, settings)

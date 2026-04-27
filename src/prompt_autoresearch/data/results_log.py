@@ -4,7 +4,12 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from ..utils import datetime_format, parse_datetime
 from .experiment_result_string import ExperimentResultString
+
+
+def _now() -> datetime:
+    return datetime.now().replace(microsecond=0)
 
 
 @dataclass
@@ -14,7 +19,7 @@ class ExperimentResults:
     description: str
     total_score: float
     low_scoring_tests: int
-    experiment_datetime: datetime = field(default_factory=datetime.now)
+    experiment_datetime: datetime = field(default_factory=_now)
 
     @classmethod
     def fields(cls) -> list[str]:
@@ -37,12 +42,12 @@ class ExperimentResults:
             description=description,
             total_score=float(total_score),
             low_scoring_tests=int(low_scoring_tests),
-            experiment_datetime=datetime.fromisoformat(experiment_datetime),
+            experiment_datetime=parse_datetime(experiment_datetime),
         )
 
     def to_fields(self) -> list[str]:
         return [
-            self.experiment_datetime.isoformat(),
+            datetime_format(self.experiment_datetime),
             str(self.total_score),
             str(self.low_scoring_tests),
             ExperimentResultString.KEEP.value if self.was_successful else ExperimentResultString.DISCARD.value,

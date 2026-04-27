@@ -1,6 +1,7 @@
+from .formatting import datetime_format, duration_from_datetimes, duration_from_perfcounters, parse_datetime
 from .process_runner import run_process
 from .text_fragments import FragmentID, get_fragment, render_fragment
-from .tracer import Tracer, dur, fmt, initialize_request, initialize_tracing
+from .tracer import Tracer, initialize_request, initialize_tracing
 
 __all__ = [
     "run_process",
@@ -10,6 +11,8 @@ __all__ = [
     "initialize_tracing",
     "initialize_request",
     "Tracer",
-    "fmt",
-    "dur",
+    "datetime_format",
+    "duration_from_datetimes",
+    "duration_from_perfcounters",
+    "parse_datetime",
 ]
