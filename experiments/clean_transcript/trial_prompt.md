@@ -40,6 +40,7 @@ The goal is not to summarize the session into broad story beats. The goal is to 
 **Recaps:**
 - If the transcript contains a recap of past in-game events, capture the whole recap in `recap_log`.
 - The recap log should include every in-game event, discovery, decision, clue, relationship, unresolved problem, ongoing risk, and prior development described in the recap.
+- Each distinct recap fact must be its own entry. Do not combine two events, discoveries, decisions, or clues into a single entry — if the recap mentions three separate past events, that is three entries, not one.
 - Write recap entries as narrator-style in-fiction records using past-perfect tense, for example: "Before the session, [character] had [done something]." or "[Character] had previously [done something]."
 - Do not write recap entries as table-process statements such as "The group recalled that..." or "During the recap, the players noted...". Write the fictional fact directly, not the act of recapping it.
 - Do not silently blend recap events into present-session events.
