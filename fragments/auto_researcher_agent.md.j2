@@ -49,7 +49,7 @@ EXPERIMENT_STATUS: <status> total=<x> max=<y>
 | `perfect`   | Total score equals max possible                    | **Stop.** Tell the user.                 |
 | `improved`  | New high score; your change was committed          | Continue                                 |
 | `discarded` | Score did not improve; your change was reverted    | Continue with a different angle          |
-| `unchanged` | Prompt was not actually edited (your bug)          | Diagnose and retry                       |
+| `unchanged` | Prompt was not actually edited (your bug)          | Diagnose and retry — never run `perform-experiment` without a real edit on purpose. |
 | `crashed`   | Python raised; non-zero exit                       | **Stop.** Surface the error to the user. |
 
 The journal and results.tsv are updated automatically by `perform-experiment` — you do not write to them.
@@ -58,9 +58,11 @@ The journal and results.tsv are updated automatically by `perform-experiment` �
 
 1. Read `current_goal.md` to understand the experiment's purpose.
 2. Read `evaluation_rubric.json` so you know what each criterion ID measures.
-3. Run `uv run prompt-autoresearch read-journal -n 20`to see how what was tried recently and how they impacted the score.
+3. Run `uv run prompt-autoresearch read-journal -n 20` to see what was tried recently and how it impacted the score.
 4. Read `{{ trial_prompt_relpath }}` to see the current best prompt.
-5. Proceed to step 1 of the loop below.
+5. **Decide whether a baseline run is needed — usually it is not:**
+   - **Journal has any prior entries (the common case on continuation):** the most recent entry already records the last total score and the low-scoring criteria. That IS your starting state. **Do NOT call `perform-experiment` without a real edit.** Re-running wastes tokens, and because scoring has natural variance a fresh "baseline" can land below the prior committed high score, which on a brand-new experiment would lower the bar for the next change and make a spurious `keep` likely. Skip straight to step 1 of the loop and treat the most recent journal entry as your reference point.
+   - **Journal is empty (brand-new experiment, never run before):** you have no recorded baseline. Go to step 1 of the loop and form a hypothesis from the rubric — pick the criterion the current prompt most plausibly under-serves and edit toward it. Your first edited run establishes the initial score. Do not run `perform-experiment` without an edit just to "get a number"; the system intentionally does not record unedited runs, and a fabricated dummy edit would only inject noise into the bar.
 
 ## The loop
 
@@ -72,7 +74,7 @@ uv run prompt-autoresearch read-journal -n 20
 
 Treat the journal as authoritative — it survives compaction; your chat memory does not. Then:
 
-1. **Hypothesize.** Pick the lowest-scoring criterion in the most recent journal entry. Open the rubric and read what that criterion ID actually rewards/penalizes. Form a specific prediction: *"Changing X in the prompt will raise criterion Y because Z."* Vague hypotheses ("make it clearer", "improve structure") produce vague edits and noisy results — avoid them.
+1. **Hypothesize.** Pick the lowest-scoring criterion in the most recent journal entry. (On a brand-new experiment with no journal yet, pick the criterion you suspect the current prompt is weakest on based on the rubric.) Open the rubric and read what that criterion ID actually rewards/penalizes. Form a specific prediction: *"Changing X in the prompt will raise criterion Y because Z."* Vague hypotheses ("make it clearer", "improve structure") produce vague edits and noisy results — avoid them.
 
 2. **Edit `{{ trial_prompt_relpath }}`.** Make the **smallest** change that tests your hypothesis. One change per iteration. Multi-change edits make it impossible to attribute the score delta.
 
