@@ -35,8 +35,6 @@ class ExperimentBaseCommand(ABC, CommandProtocol):
         self.logger.report_message(f"Processing {self.name()} for experiment {self.experiment_name}")
         common_paths.reset_experiment_dir(self.experiment_name)
 
-        self.process_experiment(settings, common_paths.experiment_dir(self.experiment_name))
-
         try:
             self.process_experiment(settings, common_paths.experiment_dir(self.experiment_name))
             self.tracer.add_context("success", "True")

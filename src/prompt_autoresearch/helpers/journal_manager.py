@@ -11,6 +11,8 @@ def setup_journal_if_necessary(filepath: Path) -> None:
 
 
 def load_journal(filepath: Path, previous_entries: int | None = None) -> str:
+    if not filepath.exists():
+        return "JOURNAL EMPTY"
     journal = filepath.read_text()
     if previous_entries is None:
         return journal
