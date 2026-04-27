@@ -41,3 +41,26 @@ def test_experiment_dir_falls_back_to_experiments_subdir_from_project_root(tmp_p
     exp_dir = _make_experiment_dir(tmp_path, "myexp")
     monkeypatch.chdir(tmp_path)
     assert common_paths.experiment_dir("myexp") == exp_dir
+
+
+def test_fragments_dir_returns_project_fragments_from_project_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    fragments_dir = tmp_path / common_paths.KnownPathnames.FRAGMENTS
+    fragments_dir.mkdir()
+    monkeypatch.chdir(tmp_path)
+    assert common_paths.fragments_dir() == fragments_dir
+
+
+def test_fragments_dir_finds_project_fragments_from_experiment_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    fragments_dir = tmp_path / common_paths.KnownPathnames.FRAGMENTS
+    fragments_dir.mkdir()
+    exp_dir = _make_experiment_dir(tmp_path, "myexp")
+
+    monkeypatch.chdir(exp_dir)
+
+    assert common_paths.fragments_dir() == fragments_dir
+
+
+def test_fragments_dir_raises_when_no_fragments_dir_exists(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(FileNotFoundError, match="Could not find fragments directory"):
+        common_paths.fragments_dir()

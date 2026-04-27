@@ -56,7 +56,13 @@ def inputs_dir(experiment_name: str) -> Path:
 
 
 def fragments_dir() -> Path:
-    return Path.cwd() / KnownPathnames.FRAGMENTS
+    cwd = Path.cwd()
+    for root in (cwd, *cwd.parents):
+        candidate = root / KnownPathnames.FRAGMENTS
+        if candidate.is_dir():
+            return candidate
+
+    raise FileNotFoundError(f"Could not find {KnownPathnames.FRAGMENTS} directory from {cwd} or its parents.")
 
 
 def experiment_filepath(experiment_name: str, filename: str) -> Path:
