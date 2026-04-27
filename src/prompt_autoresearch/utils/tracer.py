@@ -1,18 +1,17 @@
 from __future__ import annotations
 
 import uuid
-from _io import TextIOWrapper, _WrappedBuffer
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Protocol
+from typing import Any, Protocol, TextIO
 
 import structlog
 from structlog.typing import Processor
 
 from prompt_autoresearch.utils.common_paths import ensure_directory, logs_dir
 
-log_file: TextIOWrapper[_WrappedBuffer]
+log_file: TextIO | None = None
 
 
 def initialize_tracing(experiment_name: str, indent: int | None = None) -> None:
@@ -24,7 +23,7 @@ def initialize_tracing(experiment_name: str, indent: int | None = None) -> None:
         json_renderer = structlog.processors.JSONRenderer(sort_keys=True)
 
     ensure_directory(logs_dir(experiment_name))
-    log_path: Path = logs_dir(experiment_name)
+    log_path: Path = logs_dir(experiment_name) / "trace.jsonl"
     log_file = log_path.open(mode="a", encoding="utf-8")
 
     structlog.configure(

@@ -146,6 +146,13 @@ class PerformExperimentCommand(ExperimentBaseCommand):
     def name(self) -> str:
         return "Perform Experiment"
 
+    def execute(self) -> None:
+        self._last_score_info = None
+        self._last_commit_hash = None
+        super().execute()
+        if self._last_score_info is not None:
+            self.report_status(self._last_score_info, self._last_commit_hash)
+
     def perform_necessary_setup(self, settings: Settings) -> None:
         self._last_score_info = None
         self._last_commit_hash = None

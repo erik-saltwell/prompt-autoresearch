@@ -33,23 +33,24 @@ def test_help() -> None:
 
 
 def test_init_agent_cli_delegates_to_command(monkeypatch: pytest.MonkeyPatch) -> None:
-    calls: list[tuple[dict[str, Any], object]] = []
+    calls: list[dict[str, Any]] = []
     logger = object()
+    tracer = object()
 
     class FakeInitAgentCommand:
         def __init__(self, **kwargs: Any) -> None:
             self.kwargs = kwargs
 
-        def execute(self, command_logger: object) -> None:
-            calls.append((self.kwargs, command_logger))
+        def execute(self) -> None:
+            calls.append(self.kwargs)
 
     monkeypatch.setattr(console_main, "InitAgentCommand", FakeInitAgentCommand)
-    monkeypatch.setattr(console_main, "create_logger", lambda: logger)
+    monkeypatch.setattr(console_main, "create_logger", lambda experiment_name: (logger, tracer))
 
     result = runner.invoke(app, ["init-agent", "session_summarize", "--force"], color=False)
 
     assert result.exit_code == 0, result.output
-    assert calls == [({"experiment_name": "session_summarize", "force": True}, logger)]
+    assert calls == [{"experiment_name": "session_summarize", "force": True, "logger": logger, "tracer": tracer}]
 
 
 def test_version() -> None:
@@ -66,18 +67,19 @@ def test_version() -> None:
 
 
 def test_perform_experiment_cli_delegates_to_command(monkeypatch: pytest.MonkeyPatch) -> None:
-    calls: list[tuple[dict[str, Any], object]] = []
+    calls: list[dict[str, Any]] = []
     logger = object()
+    tracer = object()
 
     class FakePerformExperimentCommand:
         def __init__(self, **kwargs: Any) -> None:
             self.kwargs = kwargs
 
-        def execute(self, command_logger: object) -> None:
-            calls.append((self.kwargs, command_logger))
+        def execute(self) -> None:
+            calls.append(self.kwargs)
 
     monkeypatch.setattr(console_main, "PerformExperimentCommand", FakePerformExperimentCommand)
-    monkeypatch.setattr(console_main, "create_logger", lambda: logger)
+    monkeypatch.setattr(console_main, "create_logger", lambda experiment_name: (logger, tracer))
 
     result = runner.invoke(
         app,
@@ -94,30 +96,30 @@ def test_perform_experiment_cli_delegates_to_command(monkeypatch: pytest.MonkeyP
 
     assert result.exit_code == 0
     assert calls == [
-        (
-            {
-                "experiment_name": "clean_transcript",
-                "hypothesis_tested": "Try stricter scoring",
-                "change_to_prompt": "Updated rubric text",
-            },
-            logger,
-        )
+        {
+            "experiment_name": "clean_transcript",
+            "hypothesis_tested": "Try stricter scoring",
+            "change_to_prompt": "Updated rubric text",
+            "logger": logger,
+            "tracer": tracer,
+        }
     ]
 
 
 def test_perform_experiment_cli_resolves_name_from_cwd(monkeypatch: pytest.MonkeyPatch, tmp_path: pytest.TempPathFactory) -> None:
-    calls: list[tuple[dict[str, Any], object]] = []
+    calls: list[dict[str, Any]] = []
     logger = object()
+    tracer = object()
 
     class FakePerformExperimentCommand:
         def __init__(self, **kwargs: Any) -> None:
             self.kwargs = kwargs
 
-        def execute(self, command_logger: object) -> None:
-            calls.append((self.kwargs, command_logger))
+        def execute(self) -> None:
+            calls.append(self.kwargs)
 
     monkeypatch.setattr(console_main, "PerformExperimentCommand", FakePerformExperimentCommand)
-    monkeypatch.setattr(console_main, "create_logger", lambda: logger)
+    monkeypatch.setattr(console_main, "create_logger", lambda experiment_name: (logger, tracer))
 
     exp_dir = tmp_path / "experiments" / "from_cwd"  # type: ignore[operator]
     exp_dir.mkdir(parents=True)
@@ -131,12 +133,7 @@ def test_perform_experiment_cli_resolves_name_from_cwd(monkeypatch: pytest.Monke
     )
 
     assert result.exit_code == 0, result.output
-    assert calls == [
-        (
-            {"experiment_name": "from_cwd", "hypothesis_tested": "h", "change_to_prompt": "c"},
-            logger,
-        )
-    ]
+    assert calls == [{"experiment_name": "from_cwd", "hypothesis_tested": "h", "change_to_prompt": "c", "logger": logger, "tracer": tracer}]
 
 
 def test_perform_experiment_cli_errors_when_no_name_and_no_settings_in_cwd(monkeypatch: pytest.MonkeyPatch, tmp_path: pytest.TempPathFactory) -> None:
@@ -154,20 +151,21 @@ def test_perform_experiment_cli_errors_when_no_name_and_no_settings_in_cwd(monke
 
 
 def test_read_journal_cli_delegates_previous_entries(monkeypatch: pytest.MonkeyPatch) -> None:
-    calls: list[tuple[dict[str, Any], object]] = []
+    calls: list[dict[str, Any]] = []
     logger = object()
+    tracer = object()
 
     class FakeReadJournalCommand:
         def __init__(self, **kwargs: Any) -> None:
             self.kwargs = kwargs
 
-        def execute(self, command_logger: object) -> None:
-            calls.append((self.kwargs, command_logger))
+        def execute(self) -> None:
+            calls.append(self.kwargs)
 
     monkeypatch.setattr(console_main, "ReadJournalCommand", FakeReadJournalCommand)
-    monkeypatch.setattr(console_main, "create_logger", lambda: logger)
+    monkeypatch.setattr(console_main, "create_logger", lambda experiment_name: (logger, tracer))
 
     result = runner.invoke(app, ["read-journal", "clean_transcript", "--previous-entries", "2"], color=False)
 
     assert result.exit_code == 0
-    assert calls == [({"experiment_name": "clean_transcript", "previous_entries": 2}, logger)]
+    assert calls == [{"experiment_name": "clean_transcript", "previous_entries": 2, "logger": logger, "tracer": tracer}]

@@ -25,6 +25,7 @@ from prompt_autoresearch.data import (
     PromptData,
     Settings,
 )
+from prompt_autoresearch.utils import Tracer
 
 
 def _settings(max_simultaneous_evaluations: int = 2) -> Settings:
@@ -78,11 +79,25 @@ def test_generate_all_evaluated_results_caps_simultaneous_evaluations(monkeypatc
     assert max_active_evaluations <= 2
 
 
+class _RecordingLogger:
+    def __init__(self) -> None:
+        self.messages: list[str] = []
+        self.warnings: list[str] = []
+
+    def report_message(self, message: str) -> None:
+        self.messages.append(message)
+
+    def report_warning(self, message: str) -> None:
+        self.warnings.append(message)
+
+
 def _make_command() -> PerformExperimentCommand:
     return PerformExperimentCommand(
         experiment_name="test_exp",
         hypothesis_tested="h",
         change_to_prompt="c",
+        logger=_RecordingLogger(),  # type: ignore[arg-type]
+        tracer=Tracer(),
     )
 
 
@@ -125,18 +140,6 @@ def test_report_status_emits_sentinel_with_totals() -> None:
     cmd.report_status(score_info, "abc123")
 
     assert messages == [f"{EXPERIMENT_STATUS_PREFIX} {EXPERIMENT_STATUS_IMPROVED} total=102.1 max=110.0"]
-
-
-class _RecordingLogger:
-    def __init__(self) -> None:
-        self.messages: list[str] = []
-        self.warnings: list[str] = []
-
-    def report_message(self, message: str) -> None:
-        self.messages.append(message)
-
-    def report_warning(self, message: str) -> None:
-        self.warnings.append(message)
 
 
 def _settings_with_prompt(tmp_path: Path) -> Settings:
@@ -182,7 +185,8 @@ def test_execute_emits_status_after_completion(monkeypatch: pytest.MonkeyPatch, 
     monkeypatch.setattr(experiment_base_command.Settings, "load", lambda path: settings)
     monkeypatch.setattr(cmd, "process_experiment", fake_process_experiment)
 
-    cmd.execute(logger)  # type: ignore[arg-type]
+    cmd.logger = logger  # type: ignore[assignment]
+    cmd.execute()
 
     assert logger.messages[-2].startswith("Perform Experiment completed in ")
     assert logger.messages[-1] == f"{EXPERIMENT_STATUS_PREFIX} {EXPERIMENT_STATUS_IMPROVED} total=102.1 max=110.0"

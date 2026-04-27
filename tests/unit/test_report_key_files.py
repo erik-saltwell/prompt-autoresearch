@@ -4,6 +4,7 @@ from pathlib import Path
 
 from prompt_autoresearch.commands import ReportKeyFilesCommand
 from prompt_autoresearch.protocols import NullLogger
+from prompt_autoresearch.utils import Tracer
 
 
 class RecordingLogger(NullLogger):
@@ -47,7 +48,7 @@ def test_report_key_files_reports_absolute_paths(tmp_path: Path, monkeypatch) ->
     )
     logger = RecordingLogger()
 
-    ReportKeyFilesCommand(experiment_name="test").execute(logger)
+    ReportKeyFilesCommand(experiment_name="test", logger=logger, tracer=Tracer()).execute()
 
     assert f"Results log: {(experiment_dir / 'results.tsv').resolve()}" in logger.messages
     assert f"Experiment journal: {(experiment_dir / 'experiment_journal.md').resolve()}" in logger.messages

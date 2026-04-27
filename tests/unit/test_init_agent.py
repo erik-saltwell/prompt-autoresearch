@@ -19,6 +19,7 @@ from prompt_autoresearch.data import (
     PathSettings,
     Settings,
 )
+from prompt_autoresearch.utils import Tracer
 
 
 class _RecordingLogger:
@@ -52,9 +53,12 @@ def _settings_for(experiment_dir: Path, trial_prompt_relpath: str = "trial_promp
     )
 
 
+def _make_command(experiment_name: str = "myexp", force: bool = False) -> InitAgentCommand:
+    return InitAgentCommand(experiment_name=experiment_name, force=force, logger=_RecordingLogger(), tracer=Tracer())  # type: ignore[arg-type]
+
+
 def test_init_agent_writes_three_files(tmp_path: Path) -> None:
-    cmd = InitAgentCommand(experiment_name="myexp")
-    cmd.logger = _RecordingLogger()  # type: ignore[assignment]
+    cmd = _make_command()
 
     cmd.process_experiment(_settings_for(tmp_path), tmp_path)
 
@@ -64,8 +68,7 @@ def test_init_agent_writes_three_files(tmp_path: Path) -> None:
 
 
 def test_init_agent_settings_json_has_correct_permissions(tmp_path: Path) -> None:
-    cmd = InitAgentCommand(experiment_name="myexp")
-    cmd.logger = _RecordingLogger()  # type: ignore[assignment]
+    cmd = _make_command()
     cmd.process_experiment(_settings_for(tmp_path), tmp_path)
 
     settings_path = tmp_path / ".claude" / SETTINGS_FILENAME
@@ -79,8 +82,7 @@ def test_init_agent_settings_json_has_correct_permissions(tmp_path: Path) -> Non
 def test_init_agent_uses_relative_trial_prompt_in_templates(tmp_path: Path) -> None:
     nested = "prompts/main.md"
     (tmp_path / "prompts").mkdir()
-    cmd = InitAgentCommand(experiment_name="myexp")
-    cmd.logger = _RecordingLogger()  # type: ignore[assignment]
+    cmd = _make_command()
     cmd.process_experiment(_settings_for(tmp_path, trial_prompt_relpath=nested), tmp_path)
 
     settings_payload = json.loads((tmp_path / ".claude" / SETTINGS_FILENAME).read_text())
@@ -91,8 +93,7 @@ def test_init_agent_uses_relative_trial_prompt_in_templates(tmp_path: Path) -> N
 
 
 def test_init_agent_agent_file_includes_experiment_name(tmp_path: Path) -> None:
-    cmd = InitAgentCommand(experiment_name="my_unique_experiment")
-    cmd.logger = _RecordingLogger()  # type: ignore[assignment]
+    cmd = _make_command("my_unique_experiment")
     cmd.process_experiment(_settings_for(tmp_path), tmp_path)
 
     agent_body = (tmp_path / ".claude" / "agents" / AGENT_FILENAME).read_text()
@@ -101,26 +102,22 @@ def test_init_agent_agent_file_includes_experiment_name(tmp_path: Path) -> None:
 
 
 def test_init_agent_refuses_to_overwrite_without_force(tmp_path: Path) -> None:
-    cmd = InitAgentCommand(experiment_name="myexp")
-    cmd.logger = _RecordingLogger()  # type: ignore[assignment]
+    cmd = _make_command()
     cmd.process_experiment(_settings_for(tmp_path), tmp_path)
 
-    cmd2 = InitAgentCommand(experiment_name="myexp", force=False)
-    cmd2.logger = _RecordingLogger()  # type: ignore[assignment]
+    cmd2 = _make_command(force=False)
     with pytest.raises(FileExistsError, match="--force"):
         cmd2.process_experiment(_settings_for(tmp_path), tmp_path)
 
 
 def test_init_agent_overwrites_with_force(tmp_path: Path) -> None:
-    cmd = InitAgentCommand(experiment_name="myexp")
-    cmd.logger = _RecordingLogger()  # type: ignore[assignment]
+    cmd = _make_command()
     cmd.process_experiment(_settings_for(tmp_path), tmp_path)
 
     agent_path = tmp_path / ".claude" / "agents" / AGENT_FILENAME
     agent_path.write_text("STALE")
 
-    cmd2 = InitAgentCommand(experiment_name="myexp", force=True)
-    cmd2.logger = _RecordingLogger()  # type: ignore[assignment]
+    cmd2 = _make_command(force=True)
     cmd2.process_experiment(_settings_for(tmp_path), tmp_path)
 
     assert agent_path.read_text() != "STALE"
@@ -153,7 +150,6 @@ def test_init_agent_rejects_trial_prompt_outside_experiment_dir(tmp_path: Path) 
         ),
     )
 
-    cmd = InitAgentCommand(experiment_name="myexp")
-    cmd.logger = _RecordingLogger()  # type: ignore[assignment]
+    cmd = _make_command()
     with pytest.raises(ValueError, match="not inside experiment dir"):
         cmd.process_experiment(settings, experiment_dir)
