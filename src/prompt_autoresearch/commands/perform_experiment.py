@@ -122,6 +122,7 @@ class PerformExperimentCommand(ExperimentBaseCommand):
     completed_evals: int = 0
     _last_score_info: ScoredResults | None = field(default=None, init=False)
     _last_commit_hash: str | None = field(default=None, init=False)
+    log_completion_outputs: bool = False
 
     def reset_counts(self, settings: Settings) -> None:
         self.total_inputs = len(settings.paths.input_filenames)
@@ -256,6 +257,14 @@ class PerformExperimentCommand(ExperimentBaseCommand):
         except Exception as exc:
             self.logger.report_warning(f"Failed to revert trial prompt during crash recovery: {exc}")
 
+    def log_evaluation_results(self, results: list[str]) -> None:
+        if not self.log_completion_outputs:
+            return
+        for idx, result in enumerate(results):
+            output_dir: Path = common_paths.outputs_dir(self.experiment_name)
+            output_filepath: Path = output_dir / f"evaluation_{idx}.log"
+            output_filepath.write_text(result)
+
     def process_experiment(self, settings: Settings, experiment_dir: Path) -> None:
         self.perform_necessary_setup(settings)
         self.report_progress()
@@ -267,6 +276,7 @@ class PerformExperimentCommand(ExperimentBaseCommand):
             experiment_datetime: datetime = datetime.now()
             self.tracer.add_context("experiment_datetime", datetime_format(experiment_datetime))
             evaluation_results: list[str] = self.get_all_evaluation_results(settings, self.on_input_done, self.on_eval_done)
+            self.log_evaluation_results(evaluation_results)
 
             score_info: ScoredResults = self.process_scores(evaluation_results, settings)
 
