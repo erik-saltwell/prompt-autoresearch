@@ -61,5 +61,10 @@
   "mypy.targets": [
     "src",
     "tests"
-  ]
+  ],
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#394156",
+    "titleBar.activeForeground": "#ffffff",
+    "statusBar.background": "#394156"
+  }
 }
